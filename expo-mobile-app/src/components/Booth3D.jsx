@@ -1,8 +1,7 @@
 // components/Booth3D.jsx - نسخة محسنة
-import { useRef, useState, useEffect, useMemo } from 'react';
-import { Html, Text, Float, Sparkles } from '@react-three/drei';
+import { useRef, useState, useMemo } from 'react';
+import { Html, Float, Sparkles } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
 
 const statusConfig = {
   Available: { 

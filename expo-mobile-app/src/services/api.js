@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // ربط التطبيق برابط سيرفر الـ NestJS المحلي
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://192.168.100.103:3000';
 
 // إعدادات axios مع timeout
 const axiosInstance = axios.create({

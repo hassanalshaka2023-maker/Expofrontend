@@ -1,12 +1,43 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Link2, Copy, Check, Sparkles, Shield } from 'lucide-react';
+import { Download, Link2, Copy, Check, Sparkles, Smartphone, Wifi, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function GlobalQRGenerator() {
   const [appUrl, setAppUrl] = useState('http://localhost:5173');
   const [copied, setCopied] = useState(false);
   const qrRef = useRef();
+
+  // كشف الآيبي المحلي تلقائياً عند فتح الصفحة
+  useEffect(() => {
+    fetch('http://localhost:3000/api/network/ip')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.ip) {
+          setAppUrl(`http://${data.ip}:5173`);
+        }
+      })
+      .catch(() => {
+        // إذا ما اشتغل السيرفر، نحاول نجيب الآيبي من المتصفح
+        try {
+          const pc = new RTCPeerConnection({ iceServers: [] });
+          pc.createDataChannel('');
+          pc.createOffer().then(offer => pc.setLocalDescription(offer));
+          pc.onicecandidate = (ice) => {
+            if (ice && ice.candidate && ice.candidate.candidate) {
+              const ipMatch = ice.candidate.candidate.match(/(\d+\.\d+\.\d+\.\d+)/);
+              if (ipMatch && ipMatch[1] !== '192.168.0.1') {
+                setAppUrl(`http://${ipMatch[1]}:5173`);
+                pc.close();
+              }
+            }
+          };
+          setTimeout(() => pc.close(), 3000);
+        } catch (e) {
+          console.log('Could not auto-detect IP');
+        }
+      });
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(appUrl);
@@ -84,7 +115,7 @@ export default function GlobalQRGenerator() {
                   type="url"
                   value={appUrl}
                   onChange={(e) => setAppUrl(e.target.value)}
-                  placeholder="https://expo.sy"
+                  placeholder="http://192.168.1.x:5173"
                   className="w-full bg-[#030712] border border-white/10 rounded-xl px-4 py-3 min-h-[48px] text-sm text-gray-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                 />
               </div>
@@ -110,9 +141,19 @@ export default function GlobalQRGenerator() {
                 </motion.button>
               </div>
 
-              <div className="flex items-center gap-2 text-[10px] text-gray-500">
-                <Shield className="w-3 h-3" />
-                <span>الـ QR بجودة عالية مناسبة للطباعة</span>
+              {/* شرح طريقة الاستخدام */}
+              <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-xl p-4 space-y-2">
+                <div className="flex items-center gap-2 text-[11px] text-indigo-300 font-bold">
+                  <Info className="w-3.5 h-3.5" />
+                  طريقة الاستخدام للزوار:
+                </div>
+                <ol className="text-[10px] text-gray-400 space-y-1.5 pr-4 list-decimal">
+                  <li>تأكد أن جهازك والتاب/الجوال متصلين بنفس شبكة الـ WiFi</li>
+                  <li>شغّل تطبيق الموبايل بهذا الأمر: <code className="bg-indigo-500/10 text-indigo-300 px-1 py-0.5 rounded">cd expo-mobile-app && npm run dev</code></li>
+                  <li>سيظهر رابط في التيرمينال مثلاً <code className="bg-indigo-500/10 text-indigo-300 px-1 py-0.5 rounded">http://192.168.1.5:5173</code></li>
+                  <li>ضع هذا الرابط في الحقل أعلاه، ثم اطبع الـ QR أو اعرضه على شاشة</li>
+                  <li>الزوار يمسحون الـ QR بكاميرا جوالهم ← تفتح معهم الخريطة مباشرة</li>
+                </ol>
               </div>
             </div>
 
@@ -121,22 +162,19 @@ export default function GlobalQRGenerator() {
               <div ref={qrRef} className="p-4 bg-white rounded-xl shadow-xl">
                 <QRCodeSVG
                   value={appUrl}
-                  size={180}
+                  size={200}
                   level="H"
                   includeMargin={false}
-                  imageSettings={{
-                    src: "https://flaticon.com",
-                    x: undefined,
-                    y: undefined,
-                    height: 40,
-                    width: 40,
-                    excavate: true,
-                  }}
                 />
               </div>
               <div className="mt-4 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <p className="text-[10px] sm:text-xs text-indigo-400 font-medium">✨ جاهز للمعاينة الحية والطباعة</p>
+              </div>
+              <div className="mt-2 flex items-center gap-1.5 text-[10px] text-gray-500">
+                <Smartphone className="w-3 h-3" />
+                <Wifi className="w-3 h-3" />
+                <span>يشتغل على نفس شبكة الـ WiFi</span>
               </div>
             </div>
           </div>

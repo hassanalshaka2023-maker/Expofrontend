@@ -8,7 +8,7 @@ export const webApi = {
     return response.data;
   },
   registerInvestor: async (name, email, password, companyName) => {
-    const response = await axios.post(`${API_BASE_URL}/auth/register- investor`, { name, email, password, companyName });
+    const response = await axios.post(`${API_BASE_URL}/auth/register-investor`, { name, email, password, companyName });
     return response.data;
   },
   // جلب كافة سجلات الحضور والانصراف المرتبة من الأحدث إلى الأقدم
