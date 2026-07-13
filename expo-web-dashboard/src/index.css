@@ -1,0 +1,243 @@
+/* ══════════════════════════════════════════════════
+   تنسيقات متقدمة للوحة تحكم معرض تك إكسبو
+   ══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --font-cairo: 'Cairo', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-cairo);
+  background: #030712;
+  color: #e5e7eb;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border: none;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Custom Scrollbar أنيقة ─── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+}
+
+/* ─── Glassmorphism Base ─── */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-strong {
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Animations ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes border-beam {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-border-beam {
+  background-size: 200% 200%;
+  animation: border-beam 3s ease infinite;
+}
+
+/* ─── Shimmer loading effect ─── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── Slide up for mobile bottom sheet ─── */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* ─── 3D Scene Responsive ─── */
+@media (max-width: 1023px) {
+  .canvas-container {
+    height: 50vh !important;
+  }
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: white;
+}
+
+/* ─── Focus ring ─── */
+*:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ─── ═══════════════════════════════════════════
+   قواعد Responsiveness إضافية متقدمة
+   ═══════════════════════════════════════════════ */
+
+/* Safe area padding للشاشات ذات الحواف المنحنية (Notch) */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* تحسين اللمس (Touch) على الشاشات الصغيرة */
+@media (hover: none) and (pointer: coarse) {
+  /* تكبير جميع الأزرار التفاعلية */
+  button, 
+  a, 
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    min-height: 44px;
+  }
+
+  /* إزالة hover effects (غير مفيدة باللمس) */
+  .hover\:scale-102:hover,
+  .hover\:scale-103:hover,
+  .hover\:scale-105:hover {
+    transform: none !important;
+  }
+
+  /* زيادة المسافة بين العناصر القابلة للنقر */
+  .touch-spaced > * + * {
+    margin-top: 0.5rem;
+  }
+}
+
+/* تحسين خطوط الجداول على الشاشات الصغيرة */
+@media (max-width: 639px) {
+  /* تصغير الخطوط في البطاقات */
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  .text-4xl {
+    font-size: 1.75rem !important;
+  }
+  
+  /* تقليل padding في البطاقات */
+  .p-8 {
+    padding: 1.25rem !important;
+  }
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  /* جعل الجداول تظهر بشكل أفضل */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* منع التحديد العشوائي عند التفاعل باللمس */
+.no-select {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* تحسين الـ Scroll على iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── إخفاء Scrollbar للموبايل ─── */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
