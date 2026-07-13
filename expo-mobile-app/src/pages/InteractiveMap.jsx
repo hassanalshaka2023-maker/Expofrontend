@@ -306,17 +306,22 @@ function BottomInfoSheet({
   const isReserved = booth?.status === "Reserved";
   const details = booth?.companyDetails || {};
 
-  const handleRating = (star) => {
+  const handleRating = async (star) => {
     setUserRating(star);
-    confetti({
-      particleCount: 50,
-      spread: 60,
-      origin: { y: 0.4 },
-      colors: ["#ffd700", "#ff6b6b", "#4ecdc4", "#45b7d1"],
-    });
-    alert(
-      `⭐ شكراً لتقييمك شركة "${details.companyName || booth.id}" بـ ${star} نجوم!`,
-    );
+    
+    // إرسال التقييم إلى السيرفر
+    try {
+      await expoApi.rateBooth(booth.id, star);
+      
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.4 },
+        colors: ["#ffd700", "#ff6b6b", "#4ecdc4", "#45b7d1"],
+      });
+    } catch (err) {
+      console.error('فشل إرسال التقييم:', err);
+    }
   };
 
   return (

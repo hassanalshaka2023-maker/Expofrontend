@@ -1,6 +1,6 @@
-// components/Booth3D.jsx - نسخة محسنة
+// components/Booth3D.jsx - نسخة محسنة بالكامل
 import { useRef, useState, useMemo } from 'react';
-import { Html, Float, Sparkles } from '@react-three/drei';
+import { Html, Sparkles } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 const statusConfig = {
@@ -8,21 +8,18 @@ const statusConfig = {
     base: '#334155', 
     emissive: '#1e293b', 
     intensity: 0.2,
-    label: '🟢 متاح',
     glowColor: '#22c55e'
   },
   Pending: { 
     base: '#334155', 
     emissive: '#1e293b', 
     intensity: 0.2,
-    label: '🟡 قيد الانتظار',
     glowColor: '#eab308'
   },
   Reserved: { 
     base: '#3b82f6', 
     emissive: '#1d4ed8', 
     intensity: 1.5,
-    label: '🔵 محجوز',
     glowColor: '#3b82f6'
   },
 };
@@ -30,20 +27,13 @@ const statusConfig = {
 export default function Booth3D({ id, position, status, companyDetails, onSelect }) {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
-  const groupRef = useRef();
   const glowRef = useRef();
-  const floatRef = useRef();
   
   const isReserved = status === 'Reserved';
   const config = statusConfig[status] || statusConfig.Available;
 
-  // أنيميشن الطفو
+  // أنيميشن النبض للكشك المحجوز
   useFrame(({ clock }) => {
-    if (floatRef.current) {
-      const t = clock.getElapsedTime();
-      floatRef.current.position.y = Math.sin(t * 1.5 + id) * 0.15;
-      floatRef.current.rotation.y = Math.sin(t * 0.3 + id) * 0.05;
-    }
     if (glowRef.current && isReserved) {
       const pulse = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.3;
       glowRef.current.material.emissiveIntensity = 0.5 + pulse * 0.8;
@@ -57,7 +47,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
     onSelect({ id, status, companyDetails, position3D: position });
   };
 
-  // تلوين متطور
+  // تلوين حسب الحالة
   let themeColor = config.base;
   let emissiveColor = config.emissive;
   let emissiveIntensity = config.intensity;
@@ -72,17 +62,17 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
     emissiveIntensity = 0.4;
   }
 
-  // عناصر الزينة
+  // عناصر الزينة - ثابتة ما تتغير
   const decorations = useMemo(() => {
     const items = [];
     if (isReserved) {
-      // شعارات صغيرة حول الكشك
+      const sizes = [0.12, 0.08, 0.15, 0.1, 0.09, 0.13, 0.11, 0.14];
       for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
         items.push({
           position: [Math.cos(angle) * 2.2, 0.1, Math.sin(angle) * 2.2],
           color: i % 2 === 0 ? '#3b82f6' : '#8b5cf6',
-          size: 0.08 + Math.random() * 0.1
+          size: sizes[i]
         });
       }
     }
@@ -90,15 +80,10 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
   }, [isReserved]);
 
   return (
-    <Float
-      ref={floatRef}
-      speed={1.5}
-      rotationIntensity={0.05}
-      floatIntensity={0.15}
-    >
-      <group
-        ref={groupRef}
-        position={[position.x, position.y, position.z]}
+    <group>
+      {/* ===== HITBOX شفاف ثابت للـ Click ===== */}
+      <mesh
+        position={[position.x, position.y + 1.5, position.z]}
         onClick={handleClick}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -110,6 +95,12 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           document.body.style.cursor = 'default';
         }}
       >
+        <boxGeometry args={[4.5, 3.2, 4.5]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
+      {/* ===== العناصر المرئية ===== */}
+      <group position={[position.x, position.y, position.z]}>
         {/* Click ripple effect */}
         {clicked && (
           <mesh position={[0, 0.05, 0]}>
@@ -123,7 +114,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           </mesh>
         )}
 
-        {/* Ground with glow */}
+        {/* Ground */}
         <mesh position={[0, 0.02, 0]}>
           <boxGeometry args={[4.2, 0.04, 4.2]} />
           <meshStandardMaterial
@@ -148,7 +139,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           </mesh>
         )}
 
-        {/* زينة احتفالية للأكشاك المحجوزة */}
+        {/* Sparkles للمحجوز */}
         {isReserved && (
           <Sparkles
             count={30}
@@ -159,7 +150,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           />
         )}
 
-        {/* 4 Columns with neon glow */}
+        {/* 4 أعمدة */}
         {[[-1.8, -1.8], [1.8, -1.8], [-1.8, 1.8], [1.8, 1.8]].map((pos, idx) => (
           <group key={idx}>
             <mesh position={[pos[0], 1.5, pos[1]]}>
@@ -172,7 +163,6 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
                 roughness={0.1}
               />
             </mesh>
-            {/* Column top glow */}
             <mesh position={[pos[0], 3.0, pos[1]]}>
               <cylinderGeometry args={[0.28, 0.22, 0.08, 16]} />
               <meshStandardMaterial
@@ -184,7 +174,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           </group>
         ))}
 
-        {/* Back wall with company logo area */}
+        {/* الجدار الخلفي */}
         <mesh position={[0, 1.3, -1.8]}>
           <boxGeometry args={[3.4, 2.6, 0.2]} />
           <meshStandardMaterial
@@ -194,7 +184,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           />
         </mesh>
 
-        {/* Back wall glow border */}
+        {/* إطار الجدار الخلفي المضيء */}
         {isReserved && (
           <mesh position={[0, 1.3, -1.7]}>
             <boxGeometry args={[3.5, 2.7, 0.05]} />
@@ -209,7 +199,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           </mesh>
         )}
 
-        {/* Roof */}
+        {/* سقف */}
         <mesh position={[0, 2.9, 0]}>
           <boxGeometry args={[4.2, 0.3, 4.2]} />
           <meshStandardMaterial
@@ -219,7 +209,7 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           />
         </mesh>
 
-        {/* Neon roof frame */}
+        {/* إطار السقف النيون */}
         <mesh position={[0, 2.9, 0]}>
           <boxGeometry args={[4.24, 0.32, 4.24]} />
           <meshStandardMaterial
@@ -242,17 +232,17 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
           </mesh>
         ))}
 
-        {/* Booth number on floor */}
+        {/* رقم الكشك */}
         <Html position={[0, 0.05, 1.6]} center distanceFactor={12}>
           <div className="text-[8px] text-gray-600 font-mono tracking-wider bg-black/50 px-2 py-0.5 rounded border border-gray-800">
             #{id}
           </div>
         </Html>
 
-        {/* Main label with company info */}
+        {/* اللافتة العلوية - اسم الشركة فقط للمحجوز */}
         <Html position={[0, 3.8, 0]} center distanceFactor={14}>
           <div 
-            className={`px-4 py-2 rounded-xl font-black text-[10px] shadow-2xl border backdrop-blur-md select-none tracking-wide text-center transform transition-all duration-300 ${
+            className={`px-4 py-2 rounded-xl font-black text-[10px] shadow-2xl border backdrop-blur-md select-none tracking-wide text-center ${
               isReserved
                 ? 'bg-gradient-to-r from-blue-950/90 to-indigo-950/90 text-blue-400 border-blue-500/40 shadow-blue-500/20 scale-105'
                 : 'bg-slate-950/80 text-slate-500 border-slate-800'
@@ -269,32 +259,13 @@ export default function Booth3D({ id, position, status, companyDetails, onSelect
                 <span className="text-[7px] opacity-70 block mt-0.5 text-blue-300 tracking-wider">
                   {id} • {companyDetails?.category || 'تكنولوجيا'}
                 </span>
-                <span className="text-[6px] text-green-400 block mt-1">● نشط</span>
               </>
             ) : (
-              <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-pulse" />
-                كشك شاغر
-                <span className="text-[7px] text-slate-600">#{id}</span>
-              </span>
+              <span className="text-gray-500 text-[9px]">#{id}</span>
             )}
           </div>
         </Html>
-
-        {/* Status indicator light */}
-        <Html position={[2.2, 0.5, 2.2]} distanceFactor={12}>
-          <div className="flex items-center gap-1">
-            <div 
-              className={`w-2 h-2 rounded-full ${
-                isReserved ? 'bg-green-400 animate-pulse' : 'bg-gray-600'
-              }`}
-            />
-            <span className="text-[6px] text-gray-500">
-              {isReserved ? 'مشغول' : 'شاغر'}
-            </span>
-          </div>
-        </Html>
       </group>
-    </Float>
+    </group>
   );
 }
