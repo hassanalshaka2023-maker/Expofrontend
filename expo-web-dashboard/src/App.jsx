@@ -1,116 +1,266 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, BarChart3, Box, QrCode, User, Menu, X, Shield, Sparkles } from 'lucide-react';
-import Login from './pages/Login';
-import GlobalQRGenerator from './pages/GlobalQRGenerator';
-import AttendanceLogs from './pages/AttendanceLogs';
-import InvestorDashboard from './pages/InvestorDashboard';
-import AdminBoothsManager from './pages/AdminBoothsManager';
-import BottomNav from './components/ui/BottomNav';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LogOut,
+  BarChart3,
+  Box,
+  QrCode,
+  User,
+  Menu,
+  X,
+  Shield,
+} from "lucide-react";
+import Login from "./pages/Login";
+import GlobalQRGenerator from "./pages/GlobalQRGenerator";
+import AttendanceLogs from "./pages/AttendanceLogs";
+import InvestorDashboard from "./pages/InvestorDashboard";
+import AdminBoothsManager from "./pages/AdminBoothsManager";
+import BottomNav from "./components/ui/BottomNav";
+import Logo from "./assets/Logo.png";
 
-/* ─── TabButton: زر تبويب أنيق ─── */
+const premiumSpring = {
+  type: "spring",
+  stiffness: 260,
+  damping: 26,
+};
+
+function AmbientBackground() {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[#020914]" />
+
+      <motion.div
+        className="absolute -right-56 top-0 h-[620px] w-[620px] rounded-full bg-cyan-400/[0.08] blur-[130px]"
+        animate={{
+          x: [0, -70, 15, 0],
+          y: [0, 55, -18, 0],
+          scale: [1, 1.13, 0.96, 1],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <motion.div
+        className="absolute -bottom-64 -left-44 h-[560px] w-[560px] rounded-full bg-amber-500/[0.08] blur-[130px]"
+        animate={{
+          x: [0, 90, 20, 0],
+          y: [0, -75, 15, 0],
+          scale: [1, 1.12, 0.95, 1],
+        }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div
+        className="absolute inset-0 opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(32,216,220,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(32,216,220,.08) 1px, transparent 1px)",
+          backgroundSize: "78px 78px",
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 12%, black 86%, transparent 100%)",
+        }}
+      />
+
+      <motion.div
+        className="absolute left-[18%] top-[96px] h-28 w-[62%] opacity-60"
+        animate={{ x: ["-3%", "3%", "-3%"], opacity: [0.28, 0.8, 0.28] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      >
+        {[0, 1, 2].map((item) => (
+          <div
+            key={item}
+            className="absolute h-16 w-full rounded-[50%] border-t border-amber-400/25"
+            style={{ top: item * 18, opacity: 1 - item * 0.23 }}
+          />
+        ))}
+      </motion.div>
+
+      {Array.from({ length: 20 }).map((_, index) => (
+        <motion.span
+          key={index}
+          className="absolute h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_12px_rgba(245,185,95,.8)]"
+          style={{
+            left: `${(index * 31) % 96}%`,
+            top: `${10 + ((index * 47) % 80)}%`,
+          }}
+          animate={{
+            y: [8, -14, 8],
+            opacity: [0.12, 0.9, 0.12],
+            scale: [0.7, 1.25, 0.7],
+          }}
+          transition={{
+            duration: 4.5 + (index % 4),
+            delay: (index % 7) * 0.35,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function TabButton({ active, onClick, icon, label, badge }) {
   return (
     <motion.button
-      whileHover={{ y: -1 }}
+      whileHover={{ y: -2 }}
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className={`relative flex items-center gap-1.5 px-3 py-2 text-[11px] font-bold rounded-lg transition-colors ${
+      className={`relative isolate flex min-h-[48px] items-center gap-2 overflow-hidden rounded-xl border px-4 py-2.5 text-[11px] font-bold transition-colors ${
         active
-          ? 'text-white'
-          : 'text-gray-500 hover:text-gray-300'
+          ? "border-cyan-400/50 text-white shadow-[0_0_26px_rgba(32,216,220,.08)]"
+          : "border-transparent text-slate-500 hover:border-white/5 hover:bg-white/[0.025] hover:text-slate-200"
       }`}
     >
-      <span className="text-sm">{icon}</span>
+      {active && (
+        <>
+          <motion.div
+            layoutId="activeTab"
+            className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-br from-cyan-400/[0.16] to-[#061524]/80"
+            transition={premiumSpring}
+          />
+          <motion.div
+            className="absolute bottom-0 left-[18%] right-[18%] h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_12px_#20d8dc]"
+            animate={{ opacity: [0.45, 1, 0.45], scaleX: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.2, repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent"
+            initial={{ x: "-150%" }}
+            animate={{ x: "150%" }}
+            transition={{ duration: 3.8, repeat: Infinity, repeatDelay: 1.5 }}
+          />
+        </>
+      )}
+
+      <span className={`text-sm ${active ? "text-cyan-300" : ""}`}>{icon}</span>
       <span className="hidden sm:inline">{label}</span>
+
       {badge !== undefined && badge > 0 && (
-        <span className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center bg-rose-500 text-white text-[8px] font-black rounded-full shadow-lg shadow-rose-500/30">
+        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white shadow-lg shadow-rose-500/30">
           {badge}
         </span>
-      )}
-      {active && (
-        <motion.div
-          layoutId="activeTab"
-          className="absolute inset-0 bg-white/10 rounded-lg -z-10"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        />
       )}
     </motion.button>
   );
 }
 
-/* ─── GlassHeader: شريط علوي فاخر بنفس جودة Login ─── */
+function LogoBrand({ subtitle = "Control Panel" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.08, ...premiumSpring }}
+      className="flex min-w-0 items-center gap-3"
+    >
+      <motion.img
+        src={Logo}
+        alt="HOPEX"
+        className="h-40 w-[175px] object-contain object-left sm:h-30 sm:w-[200px]"
+        animate={{
+          filter: [
+            "drop-shadow(0 0 8px rgba(32,216,220,.06))",
+            "drop-shadow(0 0 20px rgba(32,216,220,.2))",
+            "drop-shadow(0 0 8px rgba(32,216,220,.06))",
+          ],
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="hidden border-l border-white/10 pl-2 lg:block">
+        <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-amber-400/80">
+          {subtitle}
+        </p>
+        <p className="mt-1 text-[7px] text-slate-500">
+          The New Era of Exhibitions
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+function UserBadge({ user, compact = false }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.14 }}
+      whileHover={{ y: -2 }}
+      className="flex items-center gap-2.5 rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-400/[0.1] to-[#061523]/80 p-1.5 pl-3 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]"
+    >
+      <div className="relative grid h-10 w-10 place-items-center rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/30 to-cyan-950/80 text-sm font-black text-cyan-300">
+        {user.name?.charAt(0)?.toUpperCase() || <User className="h-4 w-4" />}
+        <motion.span
+          className="absolute -inset-1 rounded-[15px] border border-transparent border-b-amber-400/45 border-r-cyan-400/65"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+
+      {!compact && (
+        <div className="hidden lg:block">
+          <p className="max-w-[120px] truncate text-[11px] font-black text-white">
+            {user.name}
+          </p>
+          <p className="mt-0.5 text-[9px] font-medium text-cyan-400">
+            {user.role === "admin" ? "Main Administrator" : user.companyName}
+          </p>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 function GlassHeader({ user, activeTab, onTabChange, onLogout, onMenuToggle }) {
   const tabs = [
-    { key: 'logs', icon: <BarChart3 className="w-3.5 h-3.5" />, label: 'سجل الحضور' },
-    { key: 'booths', icon: <Box className="w-3.5 h-3.5" />, label: 'صالة الأكشاك (3D)' },
-    { key: 'qr', icon: <QrCode className="w-3.5 h-3.5" />, label: 'QR الزوار' },
+    {
+      key: "logs",
+      icon: <BarChart3 className="h-4 w-4" />,
+      label: "Attendance Logs",
+    },
+    {
+      key: "booths",
+      icon: <Box className="h-4 w-4" />,
+      label: "3D Booth Hall",
+    },
+    {
+      key: "qr",
+      icon: <QrCode className="h-4 w-4" />,
+      label: "Visitor QR",
+    },
   ];
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
+      initial={{ y: -90, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-      className="relative z-50 bg-gradient-to-r from-[#0c0e2b]/95 via-[#0f1235]/95 to-[#1a1040]/95 backdrop-blur-2xl border-b border-white/5 px-4 lg:px-6 h-16 flex items-center justify-between overflow-hidden"
+      transition={{ type: "spring", stiffness: 190, damping: 22 }}
+      className="relative z-50 flex min-h-[82px] items-center justify-between overflow-hidden border-b border-cyan-400/20 bg-[#03101e]/92 px-4 backdrop-blur-2xl lg:px-8"
     >
-      {/* خلفية زخرفية */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 right-1/3 w-48 h-48 bg-violet-500/5 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 left-1/4 h-52 w-80 rounded-full bg-cyan-400/[0.055] blur-3xl" />
+        <div className="absolute -bottom-24 right-1/4 h-48 w-64 rounded-full bg-amber-500/[0.05] blur-3xl" />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
-      {/* زر القائمة للشاشات الصغيرة */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onMenuToggle}
-        className="lg:hidden flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
-      >
-        <Menu className="w-5 h-5" />
-      </motion.button>
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-amber-400/50"
+        animate={{ opacity: [0.3, 1, 0.3], scaleX: [0.35, 1, 0.35] }}
+        transition={{ duration: 4.5, repeat: Infinity }}
+      />
 
-      <div className="flex items-center gap-4 lg:gap-6">
-        {/* Logo / Brand */}
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex items-center gap-2"
+      <div className="relative z-10 flex min-w-0 items-center gap-4">
+        <motion.button
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          onClick={onMenuToggle}
+          aria-label="Open navigation menu"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/[0.07] bg-white/[0.035] text-slate-400 transition hover:border-cyan-400/20 hover:text-cyan-300 lg:hidden"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 ring-1 ring-white/10">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <div className="hidden md:block">
-            <h1 className="text-white font-black text-xs leading-tight">TECH EXPO</h1>
-            <p className="text-[8px] text-gray-500 font-medium">لوحة التحكم</p>
-          </div>
-        </motion.div>
+          <Menu className="h-5 w-5" />
+        </motion.button>
 
-        {/* User Badge - للشاشات المتوسطة */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="hidden lg:flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-lg px-3 py-1.5"
-        >
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400/20 to-amber-600/20 border border-amber-500/20 flex items-center justify-center">
-            <User className="w-3 h-3 text-amber-400" />
-          </div>
-          <div>
-            <p className="text-white font-bold text-[10px] leading-tight">{user.name}</p>
-            <p className="text-[8px] text-gray-500 font-medium">{user.role === 'admin' ? 'الأدمن الرئيسي' : user.companyName}</p>
-          </div>
-        </motion.div>
+        <LogoBrand />
 
-        {/* Tabs - مخفية على الموبايل (تظهر في BottomNav) */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="hidden lg:flex items-center bg-white/[0.03] border border-white/5 rounded-xl p-1"
-        >
+        <div className="hidden items-center rounded-2xl border border-white/[0.06] bg-black/20 p-1.5 lg:flex">
           {tabs.map((tab) => (
             <TabButton
               key={tab.key}
@@ -120,93 +270,99 @@ function GlassHeader({ user, activeTab, onTabChange, onLogout, onMenuToggle }) {
               label={tab.label}
             />
           ))}
-        </motion.div>
-      </div>
-
-      {/* مستخدم - للشاشات الصغيرة (اسم مختصر) */}
-      <div className="lg:hidden flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400/20 to-amber-600/20 border border-amber-500/20 flex items-center justify-center">
-          <User className="w-3 h-3 text-amber-400" />
         </div>
       </div>
 
-      {/* Logout Button */}
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={onLogout}
-        className="flex items-center gap-2 bg-white/[0.03] hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 font-bold text-[10px] px-3 py-2 rounded-lg transition-all min-h-[36px]"
-      >
-        <LogOut className="w-3.5 h-3.5" />
-        <span className="hidden sm:inline">تسجيل الخروج</span>
-      </motion.button>
+      <div className="relative z-10 flex items-center gap-3">
+        <UserBadge user={user} />
+
+        <motion.button
+          whileHover={{ y: -2, scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onLogout}
+          className="flex min-h-[48px] items-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.025] px-4 text-[10px] font-bold text-slate-400 transition hover:border-amber-400/30 hover:bg-amber-500/[0.06] hover:text-amber-300"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline">Sign Out</span>
+        </motion.button>
+      </div>
     </motion.header>
   );
 }
 
-/* ─── InvestorHeader: شريط المستثمر الفاخر ─── */
 function InvestorHeader({ user, onLogout }) {
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-      className="relative z-50 bg-gradient-to-r from-[#0c0e2b]/95 via-[#1a1040]/95 to-[#0f1235]/95 backdrop-blur-2xl border-b border-white/5 px-4 lg:px-6 h-16 flex items-center justify-between overflow-hidden"
+      transition={premiumSpring}
+      className="relative z-50 flex min-h-[82px] items-center justify-between overflow-hidden border-b border-amber-400/20 bg-[#03101e]/94 px-4 backdrop-blur-2xl lg:px-8"
     >
-      {/* خلفية زخرفية */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 left-1/3 w-48 h-48 bg-orange-500/5 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 right-1/4 h-60 w-72 rounded-full bg-amber-500/[0.07] blur-3xl" />
+        <div className="absolute -bottom-24 left-1/3 h-48 w-72 rounded-full bg-cyan-400/[0.04] blur-3xl" />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
-      <div className="flex items-center gap-3">
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30 ring-1 ring-white/10"
-        >
-          <span className="text-white font-black text-sm">I</span>
-        </motion.div>
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="bg-amber-500/10 text-amber-400 text-[8px] px-1.5 py-0.5 rounded font-bold border border-amber-500/20 flex items-center gap-1">
-              <Shield className="w-2.5 h-2.5" />
-              بوابة المستثمرين
-            </span>
-          </div>
-          <p className="text-white font-bold text-xs mt-0.5">
+      <div className="relative z-10 flex items-center gap-4">
+        <LogoBrand subtitle="Investor Portal" />
+
+        <div className="hidden md:block">
+          <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/20 bg-amber-400/[0.08] px-2.5 py-1 text-[9px] font-bold text-amber-300">
+            <Shield className="h-3 w-3" />
+            Investor
+          </span>
+          <p className="mt-1 text-[11px] font-bold text-white">
             {user.companyName}
-            <span className="text-gray-500 font-medium mr-1">({user.name})</span>
+            <span className="ml-1 font-medium text-slate-500">
+              ({user.name})
+            </span>
           </p>
         </div>
       </div>
 
       <motion.button
-        whileHover={{ scale: 1.03 }}
+        whileHover={{ y: -2 }}
         whileTap={{ scale: 0.97 }}
         onClick={onLogout}
-        className="flex items-center gap-2 bg-white/[0.03] hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 font-bold text-[10px] px-3 py-2 rounded-lg transition-all min-h-[36px]"
+        className="relative z-10 flex min-h-[48px] items-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.025] px-4 text-[10px] font-bold text-slate-400 transition hover:border-rose-400/30 hover:bg-rose-500/[0.08] hover:text-rose-300"
       >
-        <LogOut className="w-3.5 h-3.5" />
-        <span className="hidden sm:inline">تسجيل الخروج</span>
+        <LogOut className="h-4 w-4" />
+        <span className="hidden sm:inline">Sign Out</span>
       </motion.button>
     </motion.header>
   );
 }
 
 const pageVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
+  initial: { opacity: 0, y: 18, filter: "blur(8px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, y: -12, filter: "blur(5px)" },
 };
 
-/* ─── DrawerOverlay: قائمة جانبية فاخرة ─── */
-function DrawerOverlay({ open, onClose, user, activeTab, onTabChange, onLogout }) {
+function DrawerOverlay({
+  open,
+  onClose,
+  user,
+  activeTab,
+  onTabChange,
+  onLogout,
+}) {
   const drawerTabs = [
-    { key: 'logs', icon: <BarChart3 className="w-5 h-5" />, label: 'سجل الحضور' },
-    { key: 'booths', icon: <Box className="w-5 h-5" />, label: 'صالة الأكشاك (3D)' },
-    { key: 'qr', icon: <QrCode className="w-5 h-5" />, label: 'QR الزوار' },
+    {
+      key: "logs",
+      icon: <BarChart3 className="h-5 w-5" />,
+      label: "Attendance Logs",
+    },
+    {
+      key: "booths",
+      icon: <Box className="h-5 w-5" />,
+      label: "3D Booth Hall",
+    },
+    {
+      key: "qr",
+      icon: <QrCode className="h-5 w-5" />,
+      label: "Visitor QR",
+    },
   ];
 
   return (
@@ -217,63 +373,59 @@ function DrawerOverlay({ open, onClose, user, activeTab, onTabChange, onLogout }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm lg:hidden"
           />
 
-          <motion.div
-            initial={{ x: '100%' }}
+          <motion.aside
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed top-0 left-0 bottom-0 z-[70] w-[300px] bg-gradient-to-b from-[#0c0e2b] to-[#0f1235] border-l border-white/10 shadow-2xl lg:hidden flex flex-col"
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 280, damping: 30 }}
+            className="fixed bottom-0 left-0 top-0 z-[70] flex w-[310px] flex-col overflow-hidden border-l border-cyan-400/15 bg-[#03101e]/98 shadow-2xl lg:hidden"
           >
-            {/* رأس الدراور */}
-            <div className="flex items-center justify-between p-5 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-white font-black text-xs">القائمة</h2>
-                  <p className="text-[9px] text-gray-500">{user.name}</p>
-                </div>
-              </div>
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-cyan-400/[0.07] blur-3xl" />
+              <div className="absolute -bottom-24 left-0 h-64 w-64 rounded-full bg-amber-500/[0.05] blur-3xl" />
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between border-b border-white/[0.07] p-5">
+              <LogoBrand subtitle="Menu" />
+
               <motion.button
                 whileHover={{ rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                aria-label="Close navigation menu"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.07] bg-white/[0.035] text-slate-400 hover:text-white"
               >
-                <X className="w-4 h-4" />
+                <X className="h-4 w-4" />
               </motion.button>
             </div>
 
-            {/* قائمة التبويبات */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-1">
+            <div className="relative z-10 flex-1 space-y-2 overflow-y-auto p-4">
               {drawerTabs.map((tab) => {
                 const isActive = activeTab === tab.key;
+
                 return (
                   <motion.button
                     key={tab.key}
                     whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => onTabChange(tab.key)}
-                    className={`
-                      w-full flex items-center gap-3 px-4 py-3.5 min-h-[48px] rounded-xl text-right transition-all
-                      ${isActive
-                        ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                      }
-                    `}
+                    className={`flex min-h-[54px] w-full items-center gap-3 rounded-xl border px-4 text-right transition ${
+                      isActive
+                        ? "border-cyan-400/25 bg-cyan-400/[0.1] text-cyan-300"
+                        : "border-transparent text-slate-400 hover:border-white/[0.05] hover:bg-white/[0.035] hover:text-white"
+                    }`}
                   >
                     {tab.icon}
-                    <span className="font-bold text-sm">{tab.label}</span>
+                    <span className="text-sm font-bold">{tab.label}</span>
+
                     {isActive && (
                       <motion.div
                         layoutId="drawerActive"
-                        className="mr-auto w-1.5 h-1.5 rounded-full bg-indigo-500"
+                        className="ml-auto h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_#20d8dc]"
                       />
                     )}
                   </motion.button>
@@ -281,95 +433,97 @@ function DrawerOverlay({ open, onClose, user, activeTab, onTabChange, onLogout }
               })}
             </div>
 
-            {/* معلومات المستخدم */}
-            <div className="p-4 border-t border-white/10">
-              <div className="bg-white/[0.03] rounded-xl p-3 mb-3 border border-white/5">
-                <p className="text-[10px] text-gray-500 mb-1">الدور</p>
-                <p className="text-white font-bold text-xs">{user.role === 'admin' ? 'الأدمن الرئيسي' : user.companyName}</p>
+            <div className="relative z-10 border-t border-white/[0.07] p-4">
+              <div className="mb-3 rounded-xl border border-white/[0.06] bg-white/[0.025] p-3">
+                <p className="mb-1 text-[10px] text-slate-500">User</p>
+                <p className="text-xs font-bold text-white">{user.name}</p>
               </div>
+
               <motion.button
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={onLogout}
-                className="w-full flex items-center justify-center gap-2 min-h-[48px] bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/20 text-gray-400 hover:text-rose-400 font-bold text-xs rounded-xl transition-all"
+                className="flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.035] text-xs font-bold text-slate-400 transition hover:border-rose-400/25 hover:bg-rose-500/[0.08] hover:text-rose-300"
               >
-                <LogOut className="w-4 h-4" />
-                تسجيل الخروج
+                <LogOut className="h-4 w-4" />
+                Sign Out
               </motion.button>
             </div>
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   التطبيق الرئيسي
-   ═══════════════════════════════════════════════════════ */
 export default function App() {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('booths');
+  const [activeTab, setActiveTab] = useState("booths");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 
-  // 1. شاشة تسجيل الدخول
   if (!user) {
     return <Login onLoginSuccess={(loggedInUser) => setUser(loggedInUser)} />;
   }
 
-  // 2. واجهة الأدمن
-  if (user.role === 'admin') {
+  if (user.role === "admin") {
     return (
-      <div className="min-h-screen bg-[#030712] text-white flex flex-col" dir="rtl">
+      <div
+        className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#020914] text-white"
+        dir="ltr"
+      >
+        <AmbientBackground />
+
         <GlassHeader
           user={user}
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onLogout={handleLogout}
-          onMenuToggle={() => setDrawerOpen(!drawerOpen)}
+          onMenuToggle={() => setDrawerOpen((value) => !value)}
         />
 
-        <div className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+        <div className="relative z-10 flex-1 overflow-y-auto pb-20 lg:pb-0">
           <AnimatePresence mode="wait">
-            {activeTab === 'logs' && (
+            {activeTab === "logs" && (
               <motion.div
                 key="logs"
                 variants={pageVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
                 className="flex-1 overflow-y-auto"
               >
                 <AttendanceLogs />
               </motion.div>
             )}
-            {activeTab === 'booths' && (
+
+            {activeTab === "booths" && (
               <motion.div
                 key="booths"
                 variants={pageVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
                 className="flex-1 overflow-y-auto"
               >
                 <AdminBoothsManager />
               </motion.div>
             )}
-            {activeTab === 'qr' && (
+
+            {activeTab === "qr" && (
               <motion.div
                 key="qr"
                 variants={pageVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
                 className="flex-1 overflow-y-auto"
               >
                 <GlobalQRGenerator />
@@ -402,13 +556,16 @@ export default function App() {
     );
   }
 
-  // 3. واجهة المستثمر
-  if (user.role === 'investor') {
+  if (user.role === "investor") {
     return (
-      <div className="min-h-screen bg-[#030712] text-white flex flex-col" dir="rtl">
+      <div
+        className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#020914] text-white"
+        dir="ltr"
+      >
+        <AmbientBackground />
         <InvestorHeader user={user} onLogout={handleLogout} />
 
-        <div className="flex-1">
+        <div className="relative z-10 flex-1">
           <InvestorDashboard user={user} />
         </div>
       </div>

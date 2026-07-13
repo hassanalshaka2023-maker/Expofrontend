@@ -1,38 +1,59 @@
-import { useState } from 'react';
-import { webApi } from '../services/api';
+import { useEffect, useState } from "react";
+import { webApi } from "../services/api";
 
 export default function Login({ onLoginSuccess }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isRegister, setIsRegister] = useState(false);
-  const [name, setName] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const handlePointerMove = (event) => {
+      const x = (event.clientX / window.innerWidth) * 100;
+      const y = (event.clientY / window.innerHeight) * 100;
+
+      document.documentElement.style.setProperty("--login-pointer-x", `${x}%`);
+      document.documentElement.style.setProperty("--login-pointer-y", `${y}%`);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsSubmitting(true);
     try {
       if (isRegister) {
         await webApi.registerInvestor(name, email, password, companyName);
-        alert('Registration successful! Please login now.');
+        alert("Registration successful! Please login now.");
         setIsRegister(false);
       } else {
         const data = await webApi.login(email, password);
-        localStorage.setItem('token', data.token);
+        localStorage.setItem("token", data.token);
         onLoginSuccess(data.user);
       }
     } catch (err) {
       // Handle Arabic error messages from backend by translating them
-      const serverMsg = err.response?.data?.message || '';
-      const englishMsg = 
-        serverMsg.includes('بيانات الدخول غير صحيحة') ? 'Invalid email or password. Please try again.' :
-        serverMsg.includes('البريد الإلكتروني') ? 'This email is already registered.' :
-        serverMsg.includes('غير موجود') ? 'Account not found.' :
-        serverMsg.includes('خطأ') ? 'An error occurred. Please try again.' :
-        serverMsg || 'Something went wrong. Please try again.';
+      const serverMsg = err.response?.data?.message || "";
+      const englishMsg = serverMsg.includes("بيانات الدخول غير صحيحة")
+        ? "Invalid email or password. Please try again."
+        : serverMsg.includes("البريد الإلكتروني")
+          ? "This email is already registered."
+          : serverMsg.includes("غير موجود")
+            ? "Account not found."
+            : serverMsg.includes("خطأ")
+              ? "An error occurred. Please try again."
+              : serverMsg || "Something went wrong. Please try again.";
       setError(englishMsg);
     } finally {
       setIsSubmitting(false);
@@ -44,20 +65,49 @@ export default function Login({ onLoginSuccess }) {
       {/* Animated Background Layers */}
       <div className="login-bg">
         <div className="bg-gradient-layer"></div>
+        <div className="bg-grid"></div>
+        <div className="bg-pointer-light"></div>
+
+        <div className="bg-wave-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
         <div className="bg-orb bg-orb-1"></div>
         <div className="bg-orb bg-orb-2"></div>
         <div className="bg-orb bg-orb-3"></div>
-        
+
         {/* Logo as blurred background */}
         <div className="bg-logo-blur">
-          <img src="/src/assets/HOPEX_official_logo_main.png" alt="" className="bg-logo-img" />
+          <img
+            src="/src/assets/HOPEX_official_logo_main.png"
+            alt=""
+            className="bg-logo-img"
+          />
         </div>
-        
-        <div className="bg-particles" id="particles"></div>
+
+        <div className="bg-particles" id="particles">
+          {Array.from({ length: 24 }).map((_, index) => (
+            <span
+              key={index}
+              className="login-particle"
+              style={{
+                "--particle-x": `${4 + ((index * 31) % 92)}%`,
+                "--particle-y": `${6 + ((index * 47) % 84)}%`,
+                "--particle-delay": `${(index % 8) * -0.55}s`,
+                "--particle-duration": `${5 + (index % 5)}s`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Login Card */}
       <div className="login-card">
+        <div className="login-card-border"></div>
+        <div className="login-card-shimmer"></div>
+
         {/* Logo Text Only */}
         <div className="login-logo">
           <div className="logo-glow"></div>
@@ -66,19 +116,15 @@ export default function Login({ onLoginSuccess }) {
         </div>
 
         <h2 className="login-title">
-          {isRegister ? 'Create Investor Account' : 'Welcome Back'}
+          {isRegister ? "Create Investor Account" : "Welcome Back"}
         </h2>
         <p className="login-subtitle">
-          {isRegister 
-            ? 'Join Hopex and start your investment journey' 
-            : 'Sign in to continue'}
+          {isRegister
+            ? "Join Hopex and start your investment journey"
+            : "Sign in to continue"}
         </p>
-        
-        {error && (
-          <div className="login-error">
-            {error}
-          </div>
-        )}
+
+        {error && <div className="login-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           {isRegister && (
@@ -86,11 +132,11 @@ export default function Login({ onLoginSuccess }) {
               <div className="input-group">
                 <label className="input-label">Full Name</label>
                 <div className="input-wrapper">
-                  <input 
-                    type="text" 
-                    value={name} 
-                    onChange={e => setName(e.target.value)} 
-                    required 
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
                     className="input-field"
                     placeholder="Enter your full name"
                   />
@@ -100,11 +146,11 @@ export default function Login({ onLoginSuccess }) {
               <div className="input-group">
                 <label className="input-label">Company Name</label>
                 <div className="input-wrapper">
-                  <input 
-                    type="text" 
-                    value={companyName} 
-                    onChange={e => setCompanyName(e.target.value)} 
-                    required 
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    required
                     className="input-field"
                     placeholder="Your company name"
                   />
@@ -117,11 +163,11 @@ export default function Login({ onLoginSuccess }) {
           <div className="input-group">
             <label className="input-label">Email Address</label>
             <div className="input-wrapper">
-              <input 
-                type="email" 
-                value={email} 
-                onChange={e => setEmail(e.target.value)} 
-                required 
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="input-field"
                 placeholder="you@example.com"
               />
@@ -132,11 +178,11 @@ export default function Login({ onLoginSuccess }) {
           <div className="input-group">
             <label className="input-label">Password</label>
             <div className="input-wrapper">
-              <input 
-                type="password" 
-                value={password} 
-                onChange={e => setPassword(e.target.value)} 
-                required 
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 className="input-field"
                 placeholder="••••••••"
               />
@@ -144,39 +190,51 @@ export default function Login({ onLoginSuccess }) {
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            className="login-btn"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="login-btn" disabled={isSubmitting}>
+            <span className="login-btn-shimmer"></span>
             {isSubmitting ? (
               <span className="btn-loading">
                 <span className="spinner"></span>
                 Signing in...
               </span>
+            ) : isRegister ? (
+              "Create Account"
             ) : (
-              isRegister ? 'Create Account' : 'Sign In'
+              "Sign In"
             )}
           </button>
         </form>
 
         <div className="login-footer">
-          <button 
-            onClick={() => { setIsRegister(!isRegister); setError(''); }} 
+          <button
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setError("");
+            }}
             className="toggle-btn"
           >
-            {isRegister 
-              ? 'Already have an account? Sign in' 
-              : 'New investor? Create your account'}
+            {isRegister
+              ? "Already have an account? Sign in"
+              : "New investor? Create your account"}
           </button>
         </div>
 
         <div className="login-divider"></div>
-        <p className="login-copyright">&copy; {new Date().getFullYear()} Hopex. All rights reserved.</p>
+        <p className="login-copyright">
+          &copy; {new Date().getFullYear()} Hopex. All rights reserved.
+        </p>
       </div>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+          --login-pointer-x: 50%;
+          --login-pointer-y: 50%;
+          --hopex-cyan: #20d8dc;
+          --hopex-gold: #d99145;
+          --hopex-gold-soft: #e8ad68;
+        }
 
         * {
           margin: 0;
@@ -193,7 +251,10 @@ export default function Login({ onLoginSuccess }) {
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           position: relative;
           overflow: hidden;
-          background: #080c18;
+          background:
+            linear-gradient(180deg, rgba(2,9,20,.96), rgba(2,9,20,1)),
+            #020914;
+          isolation: isolate;
         }
 
         /* === ANIMATED BACKGROUND === */
@@ -207,10 +268,66 @@ export default function Login({ onLoginSuccess }) {
         .bg-gradient-layer {
           position: absolute;
           inset: 0;
-          background: 
-            radial-gradient(ellipse at 20% 50%, rgba(32, 136, 166, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 20%, rgba(199, 121, 56, 0.08) 0%, transparent 50%),
+          background:
+            radial-gradient(ellipse at 20% 50%, rgba(32, 216, 220, 0.11) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 20%, rgba(217, 145, 69, 0.085) 0%, transparent 50%),
             radial-gradient(ellipse at 50% 80%, rgba(16, 28, 53, 0.15) 0%, transparent 50%);
+        }
+
+        .bg-grid {
+          position: absolute;
+          inset: 0;
+          opacity: 0.18;
+          background-image:
+            linear-gradient(rgba(32,216,220,.045) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(32,216,220,.045) 1px, transparent 1px);
+          background-size: 78px 78px;
+          mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+          animation: loginGridMove 32s linear infinite;
+        }
+
+        .bg-pointer-light {
+          position: absolute;
+          inset: 0;
+          opacity: .35;
+          background:
+            radial-gradient(
+              460px circle at var(--login-pointer-x) var(--login-pointer-y),
+              rgba(32,216,220,.12),
+              rgba(217,145,69,.045) 35%,
+              transparent 70%
+            );
+        }
+
+        .bg-wave-lines {
+          width: 62%;
+          height: 155px;
+          position: absolute;
+          left: 19%;
+          top: 11%;
+          opacity: .55;
+          transform: rotate(-4deg);
+        }
+
+        .bg-wave-lines span {
+          position: absolute;
+          width: 100%;
+          height: 72px;
+          border-top: 1px solid rgba(217,145,69,.3);
+          border-radius: 50%;
+          animation: loginWaveMove 6.5s ease-in-out infinite;
+        }
+
+        .bg-wave-lines span:nth-child(2) {
+          top: 23px;
+          opacity: .55;
+          animation-delay: -1.2s;
+        }
+
+        .bg-wave-lines span:nth-child(3) {
+          top: 46px;
+          opacity: .28;
+          animation-delay: -2.4s;
         }
 
         .bg-orb {
@@ -326,22 +443,58 @@ export default function Login({ onLoginSuccess }) {
           100% { transform: translate(40px, -40px) rotate(5deg); }
         }
 
+        .login-particle {
+          position: absolute;
+          left: var(--particle-x);
+          top: var(--particle-y);
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: #e5a052;
+          box-shadow: 0 0 11px rgba(229,160,82,.78);
+          animation:
+            loginParticleFloat var(--particle-duration)
+            var(--particle-delay) ease-in-out infinite;
+        }
+
+        @keyframes loginParticleFloat {
+          0%,100% {
+            opacity: .06;
+            transform: translateY(10px) scale(.68);
+          }
+          50% {
+            opacity: .9;
+            transform: translateY(-16px) scale(1.28);
+          }
+        }
+
+        @keyframes loginGridMove {
+          to { transform: translate(78px, 78px); }
+        }
+
+        @keyframes loginWaveMove {
+          0%,100% { transform: translateX(-3%) scaleX(.97); opacity: .3; }
+          50% { transform: translateX(3%) scaleX(1.04); opacity: 1; }
+        }
+
         /* === LOGIN CARD === */
         .login-card {
           position: relative;
           z-index: 1;
           width: 100%;
           max-width: 420px;
-          background: rgba(16, 28, 53, 0.55);
-          backdrop-filter: blur(40px) saturate(1.4);
+          background:
+            linear-gradient(180deg, rgba(12,26,43,.86), rgba(4,15,28,.94));
+          backdrop-filter: blur(34px) saturate(1.35);
           -webkit-backdrop-filter: blur(40px) saturate(1.4);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(32, 216, 220, 0.22);
           border-radius: 24px;
           padding: 44px 36px 36px;
           box-shadow: 
             0 30px 80px rgba(0, 0, 0, 0.6),
             0 0 0 1px rgba(255, 255, 255, 0.03),
-            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            0 0 34px rgba(32,216,220,.04);
           animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -358,6 +511,51 @@ export default function Login({ onLoginSuccess }) {
           }
         }
 
+
+        .login-card-border {
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          pointer-events: none;
+          background:
+            linear-gradient(
+              120deg,
+              rgba(32,216,220,.26),
+              transparent 26%,
+              transparent 72%,
+              rgba(217,145,69,.24)
+            );
+          mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          padding: 1px;
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+        }
+
+        .login-card-shimmer {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background:
+            linear-gradient(
+              120deg,
+              transparent 24%,
+              rgba(255,255,255,.055),
+              transparent 68%
+            );
+          transform: translateX(-140%);
+          animation: loginCardShimmer 5.2s ease-in-out infinite;
+        }
+
+        @keyframes loginCardShimmer {
+          0%,42% { transform: translateX(-140%); }
+          68%,100% { transform: translateX(140%); }
+        }
+
         /* === LOGO === */
         .login-logo {
           text-align: center;
@@ -370,7 +568,7 @@ export default function Login({ onLoginSuccess }) {
           position: absolute;
           width: 120px;
           height: 120px;
-          background: radial-gradient(circle, rgba(32, 136, 166, 0.2), transparent 70%);
+          background: radial-gradient(circle, rgba(32, 216, 220, 0.18), rgba(217,145,69,.04) 45%, transparent 72%);
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
@@ -387,7 +585,7 @@ export default function Login({ onLoginSuccess }) {
           font-size: 28px;
           font-weight: 900;
           letter-spacing: 1px;
-          background: linear-gradient(135deg, #2088A6 0%, #C77938 50%, #2088A6 100%);
+          background: linear-gradient(135deg, #20d8dc 0%, #d99145 50%, #20d8dc 100%);
           background-size: 200% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -489,8 +687,8 @@ export default function Login({ onLoginSuccess }) {
 
         .input-field {
           width: 100%;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1.5px solid rgba(255, 255, 255, 0.06);
+          background: rgba(2, 12, 23, 0.62);
+          border: 1.5px solid rgba(255, 255, 255, 0.075);
           border-radius: 12px;
           padding: 14px 16px;
           font-size: 14px;
@@ -520,7 +718,7 @@ export default function Login({ onLoginSuccess }) {
           inset: 0;
           border-radius: 12px;
           padding: 1.5px;
-          background: linear-gradient(135deg, #2088A6, #C77938, #2088A6);
+          background: linear-gradient(135deg, #20d8dc, #d99145, #20d8dc);
           background-size: 200% 200%;
           opacity: 0;
           transition: opacity 0.4s ease;
@@ -549,7 +747,7 @@ export default function Login({ onLoginSuccess }) {
           width: 100%;
           padding: 16px;
           margin-top: 22px;
-          background: linear-gradient(135deg, #2088A6, #101C35);
+          background: linear-gradient(135deg, rgba(32,148,163,.96), rgba(199,121,56,.94));
           border: none;
           border-radius: 12px;
           color: #fff;
@@ -564,11 +762,32 @@ export default function Login({ onLoginSuccess }) {
           letter-spacing: 0.3px;
         }
 
+
+        .login-btn-shimmer {
+          position: absolute !important;
+          inset: 0;
+          z-index: 1 !important;
+          background:
+            linear-gradient(
+              120deg,
+              transparent 24%,
+              rgba(255,255,255,.18),
+              transparent 72%
+            );
+          transform: translateX(-140%);
+          animation: loginButtonShimmer 3.7s ease-in-out infinite;
+        }
+
+        @keyframes loginButtonShimmer {
+          0%,55% { transform: translateX(-140%); }
+          82%,100% { transform: translateX(140%); }
+        }
+
         .login-btn::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, #C77938, #2088A6);
+          background: linear-gradient(135deg, #d99145, #20d8dc);
           opacity: 0;
           transition: opacity 0.4s ease;
         }
@@ -693,6 +912,17 @@ export default function Login({ onLoginSuccess }) {
           font-weight: 500;
           margin: 0;
           animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: .001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .001ms !important;
+          }
         }
 
         /* === RESPONSIVE === */
