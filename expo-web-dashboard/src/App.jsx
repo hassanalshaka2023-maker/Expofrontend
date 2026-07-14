@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LogOut,
@@ -15,6 +16,7 @@ import GlobalQRGenerator from "./pages/GlobalQRGenerator";
 import AttendanceLogs from "./pages/AttendanceLogs";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import AdminBoothsManager from "./pages/AdminBoothsManager";
+import VisitorMapPage from "./pages/VisitorMapPage";
 import BottomNav from "./components/ui/BottomNav";
 import Logo from "./assets/Logo.png";
 
@@ -456,7 +458,7 @@ function DrawerOverlay({
   );
 }
 
-export default function App() {
+function DashboardApp() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("booths");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -573,4 +575,20 @@ export default function App() {
   }
 
   return null;
+}
+
+/* App shell / router.
+ *   - /visitor/map[/:exhibitionId]  → PUBLIC read-only Visitor map (no login).
+ *   - everything else               → the existing login + Admin/Investor
+ *     dashboard, unchanged.
+ * This app has a single implicit exhibition (booths are served globally by
+ * GET /booths), so :exhibitionId is optional and only informational. */
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/visitor/map" element={<VisitorMapPage />} />
+      <Route path="/visitor/map/:exhibitionId" element={<VisitorMapPage />} />
+      <Route path="*" element={<DashboardApp />} />
+    </Routes>
+  );
 }

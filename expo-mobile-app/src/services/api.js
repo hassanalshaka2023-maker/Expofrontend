@@ -2,37 +2,42 @@
 import axios from "axios";
 
 // ────────────────────────────────────────────────────────────────────────────
-// API base URL — configured through ONE environment variable (VITE_API_URL).
+// API base URL resolution — order of precedence:
 //
-// Vite only exposes variables prefixed with VITE_ on `import.meta.env`.
-//   • Desktop dev      : leave it unset → falls back to http://localhost:3000
-//   • Phone / LAN test : set VITE_API_URL=http://<LAPTOP_IPV4>:3000 in .env.local
-//   • Production        : set VITE_API_URL to the deployed API origin
+//   1. VITE_API_URL (explicit override) — use for production or a custom API
+//      host. Vite only exposes variables prefixed with VITE_ on import.meta.env.
+//   2. Otherwise, in the browser, derive it from the SAME host the page was
+//      opened from, on the API port (3000). This makes phone / LAN testing
+//      "just work" regardless of the laptop's current IP — when the Wi-Fi or
+//      DHCP hands out a new address, nothing needs editing. (Opening the page
+//      from localhost → API on localhost; from 192.168.x.y → API on the same
+//      192.168.x.y.)
+//   3. Non-browser fallback (SSR / tests): http://localhost:3000.
 //
-// The laptop IP is NEVER hardcoded here; it lives only in a local .env.local
-// (git-ignored). This is the fix for the "works on laptop, times out on phone"
-// bug — a phone cannot reach the laptop through `localhost`.
+// No IP is EVER hardcoded here — a stale/invalid hardcoded IP is exactly what
+// broke the map before (first unreachable, then a slow timeout after the LAN
+// address changed).
 // ────────────────────────────────────────────────────────────────────────────
-const RAW_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_PORT = 3000;
 
-// Normalize trailing slash(es) so `${base}/booths` never becomes `//booths`.
-const API_BASE_URL = "http://10.161.121.104:3000";
+function resolveApiBaseUrl() {
+  const fromEnv = import.meta.env.VITE_API_URL;
+  if (fromEnv) return fromEnv.replace(/\/+$/, ""); // strip trailing slash(es)
+  if (typeof window !== "undefined" && window.location?.hostname) {
+    // Same host as the page, on the API port. Dev is http, so no mixed-content
+    // issue; production should set VITE_API_URL explicitly (see precedence #1).
+    return `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+  }
+  return `http://localhost:${API_PORT}`;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 const isDev = import.meta.env.DEV;
 
-// Dev-only guardrail: if the page was opened over the LAN (e.g. from a phone)
-// but the API still points at localhost, warn loudly — this is the #1 cause of
-// the timeout, and it is otherwise invisible.
-if (isDev && typeof window !== "undefined") {
-  const host = window.location.hostname;
-  const apiIsLocal = /(localhost|127\.0\.0\.1)/.test(API_BASE_URL);
-  const pageIsLan = host !== "localhost" && host !== "127.0.0.1";
-  if (pageIsLan && apiIsLocal) {
-    console.warn(
-      `[api] Page opened from "${host}" but VITE_API_URL is "${API_BASE_URL}". ` +
-        "A phone cannot reach the laptop via localhost — set VITE_API_URL to " +
-        "http://<LAPTOP_IPV4>:3000 in expo-mobile-app/.env.local and restart Vite.",
-    );
-  }
+if (isDev) {
+  // The base URL is auto-derived, so this is informational — it makes the
+  // effective target visible in the console when diagnosing a failed load.
+  console.info(`[api] base URL: ${API_BASE_URL}`);
 }
 
 // إعدادات axios مع timeout

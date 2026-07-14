@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Building2,
@@ -12,8 +10,8 @@ import {
   X,
 } from "lucide-react";
 import { webApi } from "../services/api";
-import WebBooth3D from "../components/WebBooth3D";
-import ExhibitionHallScene from "../components/exhibition/ExhibitionHallScene";
+import SharedExhibitionScene from "../components/exhibition/SharedExhibitionScene";
+import BoothRatingSummary from "../components/BoothRatingSummary";
 
 const spring = {
   type: "spring",
@@ -134,6 +132,11 @@ export default function InvestorDashboard({ user }) {
   };
 
   const closePanel = () => setSelectedBooth(null);
+
+  // Latest full record for the selected booth (carries the live visitor-rating
+  // totals, which the click payload from the scene does not include).
+  const selectedFull =
+    selectedBooth && booths.find((b) => b.boothId === selectedBooth.boothId);
 
   if (loading) {
     return (
@@ -267,35 +270,15 @@ export default function InvestorDashboard({ user }) {
           </div>
         </div>
 
-        <Canvas camera={{ position: [0, 15, 25], fov: 50 }} shadows>
-          <color attach="background" args={["#020914"]} />
-          <fog attach="fog" args={["#020914", 20, 62]} />
-
-          <ExhibitionHallScene booths={booths} />
-
-          {booths.map((booth, index) => (
-            <WebBooth3D
-              key={booth.boothId}
-              index={index}
-              id={booth.boothId}
-              position={booth.position3D}
-              status={booth.status}
-              companyDetails={booth.companyDetails}
-              selected={selectedBooth?.boothId === booth.boothId}
-              onSelect={(boothInfo) => setSelectedBooth(boothInfo)}
-              allowAllClicks
-            />
-          ))}
-
-          <OrbitControls
-            maxPolarAngle={Math.PI / 2.2}
-            minDistance={8}
-            maxDistance={45}
-            target={[0, 2, 0]}
-            enableDamping
-            dampingFactor={0.1}
-          />
-        </Canvas>
+        {/* Shared, identical exhibition scene (same one Admin and the public
+            Visitor see). Investor reservation logic stays outside the scene. */}
+        <SharedExhibitionScene
+          mode="investor"
+          booths={booths}
+          exhibitionName="HOPEX EXPO"
+          selectedBoothId={selectedBooth?.boothId}
+          onSelectBooth={setSelectedBooth}
+        />
 
         <motion.div
           className="canvas-bottom-light"
@@ -557,6 +540,11 @@ export default function InvestorDashboard({ user }) {
                     )}
                   </motion.div>
                 )}
+
+                <BoothRatingSummary
+                  ratingSum={selectedFull?.ratingSum || 0}
+                  ratingCount={selectedFull?.ratingCount || 0}
+                />
 
                 {selectedBooth.status === "Reserved" && (
                   <motion.div

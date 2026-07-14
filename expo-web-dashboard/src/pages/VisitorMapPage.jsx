@@ -1,22 +1,21 @@
 /* ==========================================================================
- * InteractiveMap (mobile visitor map) — renders the EXACT SAME 3D exhibition
- * scene (SharedExhibitionScene) that Admin and Investor see in the web
- * dashboard, with the identical visitor chrome as the web VisitorMapPage. It:
- *   - loads the real booths from the public GET /booths endpoint (expoApi),
- *   - renders the identical bright outdoor exhibition scene (grass, paths,
- *     entrance / exits / information point, landscaping, the six booth families),
+ * VisitorMapPage — the PUBLIC, read-only exhibition map opened from the Visitor
+ * QR code. It:
+ *   - opens with NO login (Admin or Investor),
+ *   - loads the real booths from the public GET /booths endpoint,
+ *   - renders the SAME SharedExhibitionScene that Admin and Investor use,
  *   - shows only visitor-safe information (booth number, status, public company
- *     name / category / description).
+ *     name / category / description) — never admin controls, reservation tools,
+ *     internal notes, employee/attendance data or tokens.
  *
- * The 3D geometry, booth designs, coordinates, numbers, status markers, grass,
- * paths, lighting and camera are byte-for-byte identical to the Admin / Investor
- * map — same as the web dashboard's public visitor map.
+ * Route: /visitor/map  (and /visitor/map/:exhibitionId — this app has a single
+ * implicit exhibition served globally by GET /booths, so the id is optional and
+ * only informational; no fake id is invented).
  * ======================================================================== */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, MapPin, RefreshCw, WifiOff, Info } from "lucide-react";
-import confetti from "canvas-confetti";
-import { expoApi } from "../services/api";
+import { webApi } from "../services/api";
 import SharedExhibitionScene from "../components/exhibition/SharedExhibitionScene";
 
 const EXHIBITION_NAME = "HOPEX EXPO";
@@ -39,29 +38,13 @@ function StatusPill({ status }) {
   );
 }
 
-// Read-only average stars (rounded to nearest whole star for display).
-function AverageStars({ value }) {
-  const filled = Math.round(value);
-  return (
-    <span className="vsb-stars" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <span key={s} className={s <= filled ? "on" : ""}>
-          ★
-        </span>
-      ))}
-    </span>
-  );
-}
-
-export default function InteractiveMap() {
+export default function VisitorMapPage() {
   const [booths, setBooths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // { kind, message }
   const [selected, setSelected] = useState(null); // { boothId, status, companyDetails }
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [userRating, setUserRating] = useState(0); // star this visitor just gave
-  const [ratingBusy, setRatingBusy] = useState(false);
   const sceneRef = useRef(null);
 
   const applyResult = useCallback((data) => {
@@ -95,7 +78,7 @@ export default function InteractiveMap() {
     setLoading(true);
     setError(null);
     try {
-      applyResult(await expoApi.getBooths());
+      applyResult(await webApi.getBooths());
     } catch (err) {
       applyError(err);
     } finally {
@@ -109,7 +92,7 @@ export default function InteractiveMap() {
     let active = true;
     (async () => {
       try {
-        const data = await expoApi.getBooths();
+        const data = await webApi.getBooths();
         if (active) applyResult(data);
       } catch (err) {
         if (active) applyError(err);
@@ -126,67 +109,7 @@ export default function InteractiveMap() {
     setSelected(info);
     setSearchOpen(false);
     setQuery("");
-    setUserRating(0); // fresh rating control for each newly opened booth
   }, []);
-
-  // Visitor rates the booth (1..5). Optimistically move the local average so it
-  // updates instantly, fire the request, then reconcile with the server's
-  // authoritative totals (or revert if the request fails).
-  const handleRate = useCallback(
-    async (star) => {
-      if (!selected || ratingBusy) return;
-      const boothId = selected.boothId;
-      setUserRating(star);
-      setRatingBusy(true);
-      setBooths((prev) =>
-        prev.map((b) =>
-          b.boothId === boothId
-            ? {
-                ...b,
-                ratingSum: (b.ratingSum || 0) + star,
-                ratingCount: (b.ratingCount || 0) + 1,
-              }
-            : b
-        )
-      );
-      confetti({
-        particleCount: 60,
-        spread: 65,
-        origin: { y: 0.7 },
-        colors: ["#25b6bd", "#c9a45a", "#16d8a0", "#e29350"],
-      });
-      try {
-        const res = await expoApi.rateBooth(boothId, star);
-        if (res && typeof res.ratingCount === "number") {
-          setBooths((prev) =>
-            prev.map((b) =>
-              b.boothId === boothId
-                ? { ...b, ratingSum: res.ratingSum, ratingCount: res.ratingCount }
-                : b
-            )
-          );
-        }
-      } catch (err) {
-        // Revert the optimistic bump so the average stays truthful.
-        setBooths((prev) =>
-          prev.map((b) =>
-            b.boothId === boothId
-              ? {
-                  ...b,
-                  ratingSum: Math.max(0, (b.ratingSum || 0) - star),
-                  ratingCount: Math.max(0, (b.ratingCount || 0) - 1),
-                }
-              : b
-          )
-        );
-        setUserRating(0);
-        if (import.meta.env.DEV) console.warn("[VisitorMap] rating failed:", err?.message || err);
-      } finally {
-        setRatingBusy(false);
-      }
-    },
-    [selected, ratingBusy]
-  );
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -215,14 +138,6 @@ export default function InteractiveMap() {
   const details = selected?.companyDetails || {};
   const showCompany = selected && selected.status !== "Available" && details.companyName;
 
-  // Latest full record for the selected booth (carries the live rating totals).
-  const selectedFull = selected
-    ? booths.find((b) => b.boothId === selected.boothId) || selected
-    : null;
-  const ratingCount = selectedFull?.ratingCount || 0;
-  const ratingSum = selectedFull?.ratingSum || 0;
-  const ratingAvg = ratingCount ? ratingSum / ratingCount : 0;
-
   return (
     <div className="visitor-map-page" dir="ltr">
       {/* ── The shared 3D scene (identical to Admin & Investor) ── */}
@@ -235,7 +150,6 @@ export default function InteractiveMap() {
             exhibitionName={EXHIBITION_NAME}
             selectedBoothId={selected?.boothId || null}
             onSelectBooth={handleSelectBooth}
-            routeToBoothId={selected?.boothId || null}
           />
         </div>
       )}
@@ -338,76 +252,36 @@ export default function InteractiveMap() {
             <StatusPill status={selected.status} />
           </div>
 
-          <div className="visitor-sheet-body">
-            {showCompany ? (
-              <>
-                <div className="vsb-company">
-                  <span className="vsb-avatar">{details.companyName.charAt(0).toUpperCase()}</span>
-                  <div>
-                    <small>Exhibitor</small>
-                    <strong>{details.companyName}</strong>
-                  </div>
+          {showCompany ? (
+            <div className="visitor-sheet-body">
+              <div className="vsb-company">
+                <span className="vsb-avatar">{details.companyName.charAt(0).toUpperCase()}</span>
+                <div>
+                  <small>Exhibitor</small>
+                  <strong>{details.companyName}</strong>
                 </div>
-                {details.category && (
-                  <div className="vsb-row">
-                    <small>Category</small>
-                    <span>{details.category}</span>
-                  </div>
-                )}
-                {details.description && (
-                  <div className="vsb-row">
-                    <small>Product / About</small>
-                    <p>{details.description}</p>
-                  </div>
-                )}
-              </>
-            ) : (
+              </div>
+              {details.category && (
+                <div className="vsb-row">
+                  <small>Category</small>
+                  <span>{details.category}</span>
+                </div>
+              )}
+              {details.description && (
+                <div className="vsb-row">
+                  <small>About</small>
+                  <p>{details.description}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="visitor-sheet-body">
               <p className="vsb-available">
                 This booth is currently available. Come back soon to see which company joins the
                 exhibition here.
               </p>
-            )}
-
-            {/* Route guidance note (the glowing path is drawn on the 3D map) */}
-            <div className="vsb-route-note">
-              <MapPin size={14} />
-              <span>Follow the glowing path on the map to reach this booth.</span>
             </div>
-
-            {/* Visitor ratings — the running average + count (also shown to the
-                booth owner and the admin) and the visitor's own rate control. */}
-            <div className="vsb-rating">
-              <div className="vsb-rating-summary">
-                <AverageStars value={ratingAvg} />
-                <div className="vsb-rating-figures">
-                  <strong>{ratingCount ? ratingAvg.toFixed(1) : "—"}</strong>
-                  <small>
-                    {ratingCount
-                      ? `${ratingCount} visitor rating${ratingCount > 1 ? "s" : ""}`
-                      : "No ratings yet"}
-                  </small>
-                </div>
-              </div>
-
-              <div className="vsb-rate">
-                <small>{userRating ? "Thanks for your rating!" : "Rate this booth"}</small>
-                <div className="vsb-rate-stars" role="group" aria-label="Rate this booth">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => handleRate(s)}
-                      disabled={ratingBusy}
-                      className={s <= userRating ? "on" : ""}
-                      aria-label={`Rate ${s} star${s > 1 ? "s" : ""}`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
@@ -588,44 +462,6 @@ export default function InteractiveMap() {
         .vsb-row span { font-size: 13px; color: #33485a; font-weight: 600; }
         .vsb-row p { margin: 4px 0 0; font-size: 13px; color: #41556a; line-height: 1.6; }
         .vsb-available { margin: 0; font-size: 13px; color: #41556a; line-height: 1.6; }
-
-        .vsb-route-note {
-          display: flex; align-items: center; gap: 8px;
-          padding: 9px 11px; border-radius: 11px;
-          background: rgba(18,138,144,0.08);
-          border: 1px solid rgba(18,138,144,0.2);
-          color: #14606a; font-size: 12px; font-weight: 600;
-        }
-        .vsb-route-note svg { flex: 0 0 auto; color: #128a90; }
-
-        .vsb-rating {
-          display: flex; flex-direction: column; gap: 12px;
-          padding: 14px; border-radius: 13px;
-          background: rgba(201,164,90,0.07);
-          border: 1px solid rgba(201,164,90,0.24);
-        }
-        .vsb-rating-summary { display: flex; align-items: center; gap: 12px; }
-        .vsb-stars { display: inline-flex; font-size: 17px; letter-spacing: 1px; line-height: 1; }
-        .vsb-stars span { color: #d8dee3; }
-        .vsb-stars span.on { color: #e5a83a; }
-        .vsb-rating-figures { display: flex; flex-direction: column; gap: 2px; }
-        .vsb-rating-figures strong { font-size: 18px; font-weight: 800; color: #16303f; line-height: 1; }
-        .vsb-rating-figures small { font-size: 11px; color: #7a8f9b; }
-
-        .vsb-rate {
-          display: flex; align-items: center; justify-content: space-between; gap: 10px;
-          padding-top: 12px; border-top: 1px solid rgba(201,164,90,0.22);
-        }
-        .vsb-rate > small { font-size: 12px; font-weight: 700; color: #8a6a1f; }
-        .vsb-rate-stars { display: inline-flex; gap: 3px; }
-        .vsb-rate-stars button {
-          padding: 2px 3px; border: 0; background: none; cursor: pointer;
-          font-size: 24px; line-height: 1; color: #d8dee3;
-          transition: transform 0.12s ease, color 0.12s ease;
-        }
-        .vsb-rate-stars button:hover:not(:disabled) { transform: scale(1.18); color: #f0b84a; }
-        .vsb-rate-stars button.on { color: #e5a83a; }
-        .vsb-rate-stars button:disabled { cursor: default; }
 
         @media (max-width: 640px) {
           .visitor-topbar { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 12px; }

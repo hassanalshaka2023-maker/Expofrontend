@@ -4,18 +4,49 @@ import {
   Check,
   Copy,
   Download,
+  ExternalLink,
   Link2,
+  Printer,
   QrCode,
   Shield,
   Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const premiumSpring = {
-  type: "spring",
-  stiffness: 270,
-  damping: 27,
-};
+/* global __VISITOR_LAN_HOST__ */
+
+// The QR opens the PUBLIC visitor map served by the separate expo-mobile-app,
+// which runs on its OWN port (5173) and serves the map at the root path — NOT
+// this dashboard's /visitor/map route. The URL is built to embed a PHONE-
+// REACHABLE network address, never localhost, and needs no source edit when the
+// LAN IP / DHCP address changes:
+//
+//   1. VITE_VISITOR_MAP_URL — explicit override (production, or a custom host).
+//   2. __VISITOR_LAN_HOST__ — this machine's LAN IPv4, detected by Vite in Node
+//      at startup (see vite.config.js) and injected here. This is what makes the
+//      QR use http://192.168.x.y:5173/ even when the dashboard itself is opened
+//      via http://localhost:5180 (the browser cannot read the LAN IP on its own).
+//   3. Fallback: the hostname the dashboard was opened from (used only if no LAN
+//      IP could be detected, e.g. offline).
+//
+// There is one implicit exhibition (booths are served globally), so no
+// exhibition id is appended.
+const EXHIBITION_NAME = "HOPEX EXPO";
+// Port the expo-mobile-app dev/preview server listens on (its vite.config.js).
+const VISITOR_MAP_PORT = import.meta.env.VITE_VISITOR_MAP_PORT || "5173";
+// Injected by vite.config.js; "" when the token wasn't replaced or no LAN IP.
+const LAN_HOST = typeof __VISITOR_LAN_HOST__ === "string" ? __VISITOR_LAN_HOST__ : "";
+
+function buildDefaultMapUrl() {
+  const override = import.meta.env.VITE_VISITOR_MAP_URL;
+  if (override) return override.replace(/\/+$/, "");
+  const protocol =
+    typeof window !== "undefined" ? window.location.protocol : "http:";
+  const host =
+    LAN_HOST ||
+    (typeof window !== "undefined" ? window.location.hostname : "localhost");
+  return `${protocol}//${host}:${VISITOR_MAP_PORT}/`;
+}
 
 function BackgroundParticles() {
   return (
@@ -45,12 +76,8 @@ function BackgroundParticles() {
 }
 
 export default function GlobalQRGenerator() {
-  // Default visitor-map URL for the QR. Sourced from an env var so no LAN IP is
-  // baked into committed source; the admin can still edit it in the input.
-  // For a real phone QR, set VITE_VISITOR_APP_URL to http://<LAPTOP_IPV4>:5173/
-  const [appUrl, setAppUrl] = useState(
-    import.meta.env.VITE_VISITOR_APP_URL || "http://localhost:5173/",
-  );
+  // The admin can still edit the URL in the input (e.g. to a production domain).
+  const [appUrl, setAppUrl] = useState(buildDefaultMapUrl);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const qrRef = useRef(null);
@@ -63,6 +90,30 @@ export default function GlobalQRGenerator() {
     } catch (error) {
       console.error("Failed to copy the URL:", error);
     }
+  };
+
+  const handleOpen = () => {
+    window.open(appUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handlePrint = () => {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const dataUri =
+      "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+    const win = window.open("", "_blank", "width=520,height=680");
+    if (!win) return;
+    win.document.write(`<!doctype html><html><head><title>${EXHIBITION_NAME} — Visitor Map QR</title>
+      <style>
+        body{font-family:Inter,system-ui,sans-serif;text-align:center;padding:40px;color:#14303f}
+        h1{font-size:22px;margin:0 0 4px}p{color:#5b7180;font-size:13px;word-break:break-all;margin:6px 0 24px}
+        img{width:340px;height:340px}
+      </style></head><body>
+      <h1>${EXHIBITION_NAME}</h1><p>Scan to open the interactive exhibition map<br/>${appUrl}</p>
+      <img src="${dataUri}" alt="Visitor map QR" onload="window.print()"/>
+      </body></html>`);
+    win.document.close();
   };
 
   const handleDownload = () => {
@@ -196,13 +247,13 @@ export default function GlobalQRGenerator() {
               </div>
 
               <div>
-                <span>Destination URL</span>
-                <h2>Mobile Application Link</h2>
+                <span>Public Map URL</span>
+                <h2>{EXHIBITION_NAME} · Visitor Map</h2>
               </div>
             </div>
 
             <label className="qr-input-label" htmlFor="visitor-app-url">
-              Visitor application URL
+              Public visitor-map URL
             </label>
 
             <div className="qr-input-wrapper">
@@ -213,7 +264,7 @@ export default function GlobalQRGenerator() {
                 type="url"
                 value={appUrl}
                 onChange={(event) => setAppUrl(event.target.value)}
-                placeholder="https://expo.sy"
+                placeholder="http://192.168.x.y:5173/"
                 spellCheck="false"
               />
 
@@ -221,6 +272,18 @@ export default function GlobalQRGenerator() {
             </div>
 
             <div className="qr-button-grid">
+              <motion.button
+                type="button"
+                onClick={handleOpen}
+                whileHover={{ y: -3, scale: 1.01 }}
+                whileTap={{ scale: 0.97 }}
+                className="qr-action-button copy-button"
+              >
+                <span className="button-shimmer" />
+                <ExternalLink />
+                <span>Open Map</span>
+              </motion.button>
+
               <motion.button
                 type="button"
                 onClick={handleCopy}
@@ -251,6 +314,18 @@ export default function GlobalQRGenerator() {
 
                 <span>{downloading ? "Preparing..." : "Download QR"}</span>
               </motion.button>
+
+              <motion.button
+                type="button"
+                onClick={handlePrint}
+                whileHover={{ y: -3, scale: 1.01 }}
+                whileTap={{ scale: 0.97 }}
+                className="qr-action-button copy-button"
+              >
+                <span className="button-shimmer" />
+                <Printer />
+                <span>Print QR</span>
+              </motion.button>
             </div>
 
             <div className="quality-note">
@@ -266,8 +341,8 @@ export default function GlobalQRGenerator() {
 
           <div className="qr-preview-panel">
             <div className="preview-heading">
-              <span>Live Preview</span>
-              <strong>Visitor Access QR</strong>
+              <span>{EXHIBITION_NAME}</span>
+              <strong>Visitor Map QR</strong>
             </div>
 
             <div className="qr-stage">

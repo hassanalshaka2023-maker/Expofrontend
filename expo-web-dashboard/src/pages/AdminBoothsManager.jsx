@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
@@ -15,8 +13,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { webApi } from "../services/api";
-import WebBooth3D from "../components/WebBooth3D";
-import ExhibitionHallScene from "../components/exhibition/ExhibitionHallScene";
+import SharedExhibitionScene from "../components/exhibition/SharedExhibitionScene";
+import BoothRatingSummary from "../components/BoothRatingSummary";
 import Button from "../components/ui/Button";
 import { BoothSkeleton, PanelSkeleton } from "../components/ui/Skeleton";
 
@@ -205,6 +203,11 @@ function BoothDetailCard({ booth, onApprove, onReject, onClose }) {
         </div>
       </motion.div>
 
+      <BoothRatingSummary
+        ratingSum={booth.ratingSum || 0}
+        ratingCount={booth.ratingCount || 0}
+      />
+
       {booth.status === "Pending" && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -391,6 +394,11 @@ export default function AdminBoothsManager() {
     }),
     [booths],
   );
+
+  // Latest full record for the selected booth (carries the live visitor-rating
+  // totals; the click payload from the scene does not include them).
+  const selectedFull =
+    selectedBooth && booths.find((b) => b.boothId === selectedBooth.boothId);
 
   if (loading) {
     return (
@@ -615,35 +623,15 @@ export default function AdminBoothsManager() {
           )}
         </AnimatePresence>
 
-        <Canvas camera={{ position: [0, 5, 10], fov: 45 }}>
-          <color attach="background" args={["#020914"]} />
-          <fog attach="fog" args={["#020914", 18, 55]} />
-
-          <ExhibitionHallScene booths={booths} />
-
-          {booths.map((booth, index) => (
-            <WebBooth3D
-              key={booth.boothId}
-              index={index}
-              id={booth.boothId}
-              position={booth.position3D}
-              status={booth.status}
-              companyDetails={booth.companyDetails}
-              selected={selectedBooth?.boothId === booth.boothId}
-              onSelect={() => setSelectedBooth(booth)}
-              allowAllClicks
-            />
-          ))}
-
-          <OrbitControls
-            maxPolarAngle={Math.PI / 2.1}
-            minDistance={5}
-            maxDistance={30}
-            enablePan
-            enableDamping
-            dampingFactor={0.06}
-          />
-        </Canvas>
+        {/* Shared, identical exhibition scene (same one the Investor and public
+            Visitor see). Admin business logic stays outside the scene. */}
+        <SharedExhibitionScene
+          mode="admin"
+          booths={booths}
+          exhibitionName="HOPEX EXPO"
+          selectedBoothId={selectedBooth?.boothId}
+          onSelectBooth={setSelectedBooth}
+        />
 
         <motion.div
           className="canvas-bottom-light"
@@ -734,7 +722,7 @@ export default function AdminBoothsManager() {
             {selectedBooth ? (
               <BoothDetailCard
                 key={selectedBooth.boothId}
-                booth={selectedBooth}
+                booth={selectedFull || selectedBooth}
                 onApprove={(id) => handleAction("approve", id)}
                 onReject={(id) => handleAction("reject", id)}
                 onClose={() => setSelectedBooth(null)}
