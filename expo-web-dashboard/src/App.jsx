@@ -10,13 +10,14 @@ import {
   Menu,
   X,
   Shield,
+  Users,
 } from "lucide-react";
 import Login from "./pages/Login";
 import GlobalQRGenerator from "./pages/GlobalQRGenerator";
 import AttendanceLogs from "./pages/AttendanceLogs";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import AdminBoothsManager from "./pages/AdminBoothsManager";
-import VisitorMapPage from "./pages/VisitorMapPage";
+import StaffManagement from "./pages/StaffManagement";
 import BottomNav from "./components/ui/BottomNav";
 import Logo from "./assets/Logo.png";
 
@@ -225,6 +226,11 @@ function GlassHeader({ user, activeTab, onTabChange, onLogout, onMenuToggle }) {
       label: "3D Booth Hall",
     },
     {
+      key: "staff",
+      icon: <Users className="h-4 w-4" />,
+      label: "Staff Management",
+    },
+    {
       key: "qr",
       icon: <QrCode className="h-4 w-4" />,
       label: "Visitor QR",
@@ -359,6 +365,11 @@ function DrawerOverlay({
       key: "booths",
       icon: <Box className="h-5 w-5" />,
       label: "3D Booth Hall",
+    },
+    {
+      key: "staff",
+      icon: <Users className="h-5 w-5" />,
+      label: "Staff Management",
     },
     {
       key: "qr",
@@ -515,6 +526,20 @@ function DashboardApp() {
                 className="flex-1 overflow-y-auto"
               >
                 <AdminBoothsManager />
+              </motion.div>
+            )}
+
+            {activeTab === "staff" && (
+              <motion.div
+                key="staff"
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+                className="flex-1 overflow-y-auto"
+              >
+                <StaffManagement />
               </motion.div>
             )}
 
