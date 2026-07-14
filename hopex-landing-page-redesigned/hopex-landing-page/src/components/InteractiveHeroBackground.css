@@ -1,0 +1,273 @@
+/* ==========================================================================
+   InteractiveHeroBackground
+   Exhibition-inspired animated background that sits behind the HOPEX logo.
+   Uses the global brand tokens (--cyan, --gold, --navy, ...) from styles.css.
+   Pure CSS transforms/opacity/gradients; a single rAF handler in the component
+   writes --hero-glow-x/y (mouse light) and --hero-px/py (parallax).
+   ========================================================================== */
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  /* Defaults so the layers are centred before the first pointer move. */
+  --hero-glow-x: 50%;
+  --hero-glow-y: 42%;
+  --hero-px: 0;
+  --hero-py: 0;
+}
+
+.hero-bg > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* Deep navy cinematic base ------------------------------------------------ */
+.hero-bg-base {
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(0, 60, 78, 0.28), transparent 55%),
+    radial-gradient(90% 80% at 18% 90%, rgba(12, 52, 85, 0.22), transparent 60%),
+    linear-gradient(180deg, #020912 0%, #020b14 70%, #030d17 100%);
+}
+
+/* Architectural / floor-plan grid in perspective ------------------------- */
+.hero-bg-grid {
+  background-image:
+    linear-gradient(rgba(52, 177, 193, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 177, 193, 0.05) 1px, transparent 1px);
+  background-size: 78px 78px;
+  mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 62%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 62%, transparent 100%);
+  transform:
+    translate3d(calc(var(--hero-px) * 12px), calc(var(--hero-py) * 12px), 0)
+    perspective(760px) rotateX(62deg) scale(1.45) translateY(28%);
+  transform-origin: center 74%;
+  animation: hero-bg-grid-drift 18s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes hero-bg-grid-drift {
+  to { background-position: 0 78px, 78px 0; }
+}
+
+/* Slowly moving cyan / turquoise / gold gradient lights ------------------- */
+.hero-bg-blob {
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.hero-bg-blob-cyan {
+  inset: auto auto 0 -6%;
+  width: 46vw;
+  height: 46vw;
+  background: radial-gradient(circle, rgba(0, 198, 205, 0.34), transparent 66%);
+  animation: hero-bg-float-a 20s ease-in-out infinite alternate;
+}
+
+.hero-bg-blob-teal {
+  inset: -10% -8% auto auto;
+  width: 42vw;
+  height: 42vw;
+  background: radial-gradient(circle, rgba(23, 217, 212, 0.24), transparent 68%);
+  animation: hero-bg-float-b 24s ease-in-out infinite alternate;
+}
+
+.hero-bg-blob-gold {
+  inset: 8% 12% auto auto;
+  width: 30vw;
+  height: 30vw;
+  background: radial-gradient(circle, rgba(211, 170, 82, 0.16), transparent 70%);
+  animation: hero-bg-float-c 28s ease-in-out infinite alternate;
+}
+
+@keyframes hero-bg-float-a {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(6%, -5%, 0) scale(1.12); }
+}
+@keyframes hero-bg-float-b {
+  0%   { transform: translate3d(0, 0, 0) scale(1.05); }
+  100% { transform: translate3d(-5%, 6%, 0) scale(0.94); }
+}
+@keyframes hero-bg-float-c {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-4%, 4%, 0) scale(1.15); }
+}
+
+/* Soft glowing lines resembling venue paths / floor plans ----------------- */
+.hero-bg-floorplan {
+  opacity: 0.55;
+  transform: translate3d(calc(var(--hero-px) * 22px), calc(var(--hero-py) * 22px), 0);
+  mask-image: radial-gradient(120% 80% at 50% 45%, black 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 80% at 50% 45%, black 30%, transparent 78%);
+}
+
+.floorplan-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(23, 217, 212, 0.5), transparent);
+  box-shadow: 0 0 12px rgba(23, 217, 212, 0.28);
+}
+
+.line-1 {
+  left: 8%;
+  top: 34%;
+  width: 30%;
+  height: 1px;
+  animation: hero-bg-line 9s ease-in-out infinite;
+}
+.line-2 {
+  right: 10%;
+  top: 58%;
+  width: 26%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(211, 170, 82, 0.42), transparent);
+  box-shadow: 0 0 12px rgba(211, 170, 82, 0.2);
+  animation: hero-bg-line 11s ease-in-out infinite 1.4s;
+}
+.line-3 {
+  left: 22%;
+  top: 20%;
+  width: 1px;
+  height: 26%;
+  background: linear-gradient(180deg, transparent, rgba(23, 217, 212, 0.36), transparent);
+  box-shadow: 0 0 12px rgba(23, 217, 212, 0.18);
+  animation: hero-bg-line 10s ease-in-out infinite 0.8s;
+}
+
+.floorplan-node {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(23, 217, 212, 0.08), 0 0 16px rgba(23, 217, 212, 0.7);
+  animation: hero-bg-node 4.5s ease-in-out infinite;
+}
+.node-1 { left: 38%; top: 34%; }
+.node-2 {
+  right: 10%;
+  top: 58%;
+  background: var(--gold-soft);
+  box-shadow: 0 0 0 4px rgba(211, 170, 82, 0.08), 0 0 16px rgba(211, 170, 82, 0.6);
+  animation-delay: 1.6s;
+}
+
+@keyframes hero-bg-line {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+@keyframes hero-bg-node {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Slow floating geometric elements --------------------------------------- */
+.hero-bg-shapes {
+  opacity: 0.5;
+  transform: translate3d(calc(var(--hero-px) * 34px), calc(var(--hero-py) * 34px), 0);
+}
+
+.hero-bg-shape {
+  position: absolute;
+  border: 1px solid rgba(76, 208, 215, 0.22);
+  will-change: transform;
+}
+
+.shape-ring {
+  left: 12%;
+  top: 26%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border-color: rgba(76, 208, 215, 0.18);
+  animation: hero-bg-shape-a 16s ease-in-out infinite;
+}
+.shape-square {
+  right: 14%;
+  top: 30%;
+  width: 84px;
+  height: 84px;
+  border-radius: 14px;
+  border-color: rgba(211, 170, 82, 0.2);
+  animation: hero-bg-shape-b 19s ease-in-out infinite;
+}
+.shape-diamond {
+  left: 46%;
+  bottom: 16%;
+  width: 62px;
+  height: 62px;
+  border-color: rgba(76, 208, 215, 0.14);
+  transform: rotate(45deg);
+  animation: hero-bg-shape-c 22s ease-in-out infinite;
+}
+
+@keyframes hero-bg-shape-a {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(20deg); }
+}
+@keyframes hero-bg-shape-b {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(16px) rotate(-18deg); }
+}
+@keyframes hero-bg-shape-c {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(70deg) translateY(-14px); }
+}
+
+/* Very low-opacity floating particles ------------------------------------ */
+.hero-bg-particles {
+  transform: translate3d(calc(var(--hero-px) * 16px), calc(var(--hero-py) * 16px), 0);
+}
+
+.hero-bg-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(34, 226, 221, 0.6);
+  box-shadow: 0 0 8px rgba(34, 226, 221, 0.5);
+  opacity: 0.35;
+  animation-name: hero-bg-particle-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+.hero-bg-particle[data-accent='true'] {
+  background: rgba(211, 174, 84, 0.7);
+  box-shadow: 0 0 9px rgba(211, 174, 84, 0.55);
+}
+
+@keyframes hero-bg-particle-float {
+  0%, 100% { transform: translateY(8px) scale(0.7); opacity: 0.12; }
+  50% { transform: translateY(-14px) scale(1.2); opacity: 0.55; }
+}
+
+/* Soft mouse-follow light ------------------------------------------------- */
+.hero-bg-mouse-glow {
+  background: radial-gradient(
+    340px circle at var(--hero-glow-x) var(--hero-glow-y),
+    rgba(23, 217, 212, 0.12),
+    rgba(211, 170, 82, 0.05) 42%,
+    transparent 72%
+  );
+  transition: background 0.2s ease-out;
+}
+
+/* Soft vignette around the edges ----------------------------------------- */
+.hero-bg-vignette {
+  box-shadow: inset 0 0 200px 70px rgba(2, 11, 20, 0.7);
+  background: radial-gradient(130% 120% at 50% 40%, transparent 55%, rgba(2, 9, 18, 0.55) 100%);
+}
+
+/* Lighter footprint on small / low-power screens ------------------------- */
+@media (max-width: 760px) {
+  .hero-bg-blob { filter: blur(42px); opacity: 0.4; }
+  .hero-bg-shapes { display: none; }
+  .hero-bg-floorplan { opacity: 0.35; }
+  /* Reduce particle count on mobile. */
+  .hero-bg-particle:nth-child(n + 12) { display: none; }
+}
