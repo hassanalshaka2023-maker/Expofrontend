@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import ExhibitionBooth from './exhibition/ExhibitionBooth';
+
+/* Master switch for the full exhibition-hall redesign. Set to false to revert
+ * every booth to the original OriginalWebBooth3D visuals below. */
+export const HALL_REDESIGN_ENABLED = true;
 
 const statusConfig = {
   Available: { 
@@ -27,7 +32,8 @@ const statusConfig = {
   },
 };
 
-export default function WebBooth3D({ id, position, status, companyDetails, onSelect, allowAllClicks = false }) {
+// Original booth visuals — unchanged. Used by every non-prototype booth.
+function OriginalWebBooth3D({ id, position, status, companyDetails, onSelect, allowAllClicks = false }) {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -290,4 +296,21 @@ export default function WebBooth3D({ id, position, status, companyDetails, onSel
       )}
     </group>
   );
+}
+
+/*
+ * Booth dispatcher.
+ * With the hall redesign enabled, every booth renders through ExhibitionBooth,
+ * which deterministically picks one of the five coordinated variants
+ * (standard / corner / island / premium / technology). Props — including the
+ * real id, position, status, companyDetails, onSelect, allowAllClicks and the
+ * new `selected` flag — are forwarded untouched, so interaction and reservation
+ * behaviour are identical to before. This wrapper calls no hooks itself.
+ * To revert entirely: set HALL_REDESIGN_ENABLED = false above.
+ */
+export default function WebBooth3D(props) {
+  if (HALL_REDESIGN_ENABLED) {
+    return <ExhibitionBooth {...props} />;
+  }
+  return <OriginalWebBooth3D {...props} />;
 }

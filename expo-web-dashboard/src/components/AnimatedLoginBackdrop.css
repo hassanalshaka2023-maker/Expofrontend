@@ -1,0 +1,211 @@
+/* ==========================================================================
+   AnimatedLoginBackdrop — exhibition-inspired animated background for /login.
+   Pure CSS motion; the component writes --login-glow-x/y (mouse light) and
+   --login-px/py (parallax). HOPEX brand palette: navy / cyan / turquoise / gold.
+   ========================================================================== */
+
+.login-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --login-glow-x: 50%;
+  --login-glow-y: 45%;
+  --login-px: 0;
+  --login-py: 0;
+}
+
+.login-bg > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* Deep navy cinematic base ----------------------------------------------- */
+.login-bg-base {
+  background:
+    radial-gradient(115% 90% at 22% 15%, rgba(0, 78, 98, 0.35), transparent 55%),
+    radial-gradient(95% 85% at 85% 88%, rgba(199, 121, 56, 0.12), transparent 60%),
+    linear-gradient(160deg, #03101e 0%, #020914 62%, #01060f 100%);
+}
+
+/* Subtle architectural grid ---------------------------------------------- */
+.login-bg-grid {
+  background-image:
+    linear-gradient(rgba(32, 216, 220, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 216, 220, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  transform: translate3d(calc(var(--login-px) * 10px), calc(var(--login-py) * 10px), 0);
+  animation: login-grid-drift 26s linear infinite;
+}
+
+@keyframes login-grid-drift {
+  to { background-position: 72px 72px; }
+}
+
+/* Slow cyan / turquoise / gold gradient lights --------------------------- */
+.login-bg-blob {
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.login-bg-blob-cyan {
+  inset: -12% auto auto -8%;
+  width: 44vw;
+  height: 44vw;
+  background: radial-gradient(circle, rgba(32, 216, 220, 0.32), transparent 66%);
+  animation: login-float-a 22s ease-in-out infinite alternate;
+}
+.login-bg-blob-teal {
+  inset: auto -6% -14% 20%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(23, 190, 196, 0.22), transparent 68%);
+  animation: login-float-b 26s ease-in-out infinite alternate;
+}
+.login-bg-blob-gold {
+  inset: 6% -6% auto auto;
+  width: 30vw;
+  height: 30vw;
+  background: radial-gradient(circle, rgba(217, 145, 69, 0.18), transparent 70%);
+  animation: login-float-c 30s ease-in-out infinite alternate;
+}
+
+@keyframes login-float-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(7%, 5%, 0) scale(1.12); }
+}
+@keyframes login-float-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.05); }
+  100% { transform: translate3d(-6%, -4%, 0) scale(0.95); }
+}
+@keyframes login-float-c {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-5%, 5%, 0) scale(1.16); }
+}
+
+/* Glowing venue-path / floor-plan lines ---------------------------------- */
+.login-bg-floorplan {
+  opacity: 0.5;
+  transform: translate3d(calc(var(--login-px) * 20px), calc(var(--login-py) * 20px), 0);
+  mask-image: radial-gradient(120% 90% at 30% 45%, black 25%, transparent 80%);
+  -webkit-mask-image: radial-gradient(120% 90% at 30% 45%, black 25%, transparent 80%);
+}
+
+.login-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(32, 216, 220, 0.5), transparent);
+  box-shadow: 0 0 12px rgba(32, 216, 220, 0.28);
+}
+.login-line-1 {
+  left: 6%;
+  top: 30%;
+  width: 32%;
+  height: 1px;
+  animation: login-line-pulse 9s ease-in-out infinite;
+}
+.login-line-2 {
+  left: 12%;
+  top: 68%;
+  width: 24%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(217, 145, 69, 0.42), transparent);
+  box-shadow: 0 0 12px rgba(217, 145, 69, 0.2);
+  animation: login-line-pulse 11s ease-in-out infinite 1.5s;
+}
+
+.login-node {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #20d8dc;
+  box-shadow: 0 0 0 4px rgba(32, 216, 220, 0.08), 0 0 16px rgba(32, 216, 220, 0.7);
+  animation: login-node-pulse 4.5s ease-in-out infinite;
+}
+.login-node-1 { left: 38%; top: 30%; }
+.login-node-2 {
+  left: 12%;
+  top: 68%;
+  background: #e8ad68;
+  box-shadow: 0 0 0 4px rgba(217, 145, 69, 0.08), 0 0 16px rgba(217, 145, 69, 0.6);
+  animation-delay: 1.6s;
+}
+
+@keyframes login-line-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+@keyframes login-node-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Floating light particles ----------------------------------------------- */
+.login-bg-particles {
+  transform: translate3d(calc(var(--login-px) * 14px), calc(var(--login-py) * 14px), 0);
+}
+.login-bg-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(32, 216, 220, 0.6);
+  box-shadow: 0 0 8px rgba(32, 216, 220, 0.5);
+  opacity: 0.32;
+  animation-name: login-particle-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+.login-bg-particle[data-accent="true"] {
+  background: rgba(232, 173, 104, 0.7);
+  box-shadow: 0 0 9px rgba(232, 173, 104, 0.55);
+}
+
+@keyframes login-particle-float {
+  0%, 100% { transform: translateY(9px) scale(0.7); opacity: 0.1; }
+  50% { transform: translateY(-15px) scale(1.2); opacity: 0.5; }
+}
+
+/* Soft mouse-follow light ------------------------------------------------ */
+.login-bg-mouse-glow {
+  background: radial-gradient(
+    380px circle at var(--login-glow-x) var(--login-glow-y),
+    rgba(32, 216, 220, 0.12),
+    rgba(217, 145, 69, 0.05) 42%,
+    transparent 72%
+  );
+  transition: background 0.2s ease-out;
+}
+
+/* Soft vignette ---------------------------------------------------------- */
+.login-bg-vignette {
+  box-shadow: inset 0 0 200px 70px rgba(1, 6, 15, 0.75);
+  background: radial-gradient(130% 120% at 40% 40%, transparent 52%, rgba(1, 6, 15, 0.6) 100%);
+}
+
+/* Lighter footprint on small / low-power screens ------------------------- */
+@media (max-width: 720px) {
+  .login-bg-blob { filter: blur(48px); opacity: 0.42; }
+  .login-bg-floorplan { opacity: 0.32; }
+  .login-bg-particle:nth-child(n + 11) { display: none; }
+}
+
+/* Respect reduced motion — freeze all autonomous animation ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .login-bg-grid,
+  .login-bg-blob,
+  .login-line,
+  .login-node,
+  .login-bg-particle {
+    animation: none !important;
+  }
+  .login-bg-mouse-glow {
+    transition: none;
+  }
+}

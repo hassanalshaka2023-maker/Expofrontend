@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Grid, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Building2,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { webApi } from "../services/api";
 import WebBooth3D from "../components/WebBooth3D";
+import ExhibitionHallScene from "../components/exhibition/ExhibitionHallScene";
 
 const spring = {
   type: "spring",
@@ -270,49 +271,17 @@ export default function InvestorDashboard({ user }) {
           <color attach="background" args={["#020914"]} />
           <fog attach="fog" args={["#020914", 20, 62]} />
 
-          <ambientLight intensity={0.58} />
+          <ExhibitionHallScene booths={booths} />
 
-          <pointLight
-            position={[10, 20, 10]}
-            intensity={1.8}
-            color="#20d8dc"
-            castShadow
-          />
-
-          <pointLight
-            position={[-10, 15, -10]}
-            intensity={0.72}
-            color="#16d8a0"
-          />
-
-          <pointLight position={[0, 5, 15]} intensity={0.42} color="#d99145" />
-
-          <directionalLight
-            position={[-20, 30, 20]}
-            intensity={1.15}
-            color="#ffffff"
-          />
-
-          <Grid
-            position={[0, -0.01, 0]}
-            args={[60, 60]}
-            cellSize={1}
-            cellThickness={0.6}
-            cellColor="#123140"
-            sectionSize={5}
-            sectionThickness={1.2}
-            sectionColor="#178795"
-            fadeDistance={50}
-            infiniteGrid
-          />
-
-          {booths.map((booth) => (
+          {booths.map((booth, index) => (
             <WebBooth3D
               key={booth.boothId}
+              index={index}
               id={booth.boothId}
               position={booth.position3D}
               status={booth.status}
               companyDetails={booth.companyDetails}
+              selected={selectedBooth?.boothId === booth.boothId}
               onSelect={(boothInfo) => setSelectedBooth(boothInfo)}
               allowAllClicks
             />

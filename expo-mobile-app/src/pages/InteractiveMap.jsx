@@ -473,14 +473,31 @@ export default function InteractiveMap() {
   const [selectedBooth, setSelectedBooth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [showDirections, setShowDirections] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [userStartPoint, setUserStartPoint] = useState(null);
   const [useTextureFloor, setUseTextureFloor] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+  // جلب الأكشاك من السيرفر — يُستدعى عند التحميل الأول وعند الضغط على "إعادة المحاولة"
+  const loadBooths = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setIsEmpty(false);
+    try {
+      const data = await expoApi.getBooths();
+      const list = Array.isArray(data) ? data : [];
+      setBooths(list);
+      setIsEmpty(list.length === 0);
+    } catch (err) {
+      // الرسالة المصنّفة الآتية من الـ interceptor (مهلة/تعذّر اتصال/خطأ سيرفر…)
+      setError(err?.userMessage || "تعذّر تحميل الخريطة.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const standPoint = urlParams.get("from");
 
@@ -497,25 +514,8 @@ export default function InteractiveMap() {
       setUseTextureFloor(true);
     }
 
-    expoApi
-      .getBooths()
-      .then((data) => {
-        if (mounted) {
-          setBooths(data);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (mounted) {
-          setError("فشل في تحميل الخريطة");
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    loadBooths();
+  }, [loadBooths]);
 
   const handleClose = useCallback(() => {
     setSelectedBooth(null);
@@ -551,6 +551,10 @@ export default function InteractiveMap() {
     }
   }, []);
 
+  if (loading) {
+    return <SkeletonLoader />;
+  }
+
   if (error && booths.length === 0) {
     return (
       <div className="relative w-screen h-screen overflow-hidden bg-[#020617] flex items-center justify-center p-8">
@@ -558,10 +562,12 @@ export default function InteractiveMap() {
           <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
             <span className="text-3xl">⚠️</span>
           </div>
-          <h2 className="text-white font-black text-lg mb-2">تعذر التحميل</h2>
+          <h2 className="text-white font-black text-lg mb-2">
+            تعذّر الاتصال بخادم المعرض
+          </h2>
           <p className="text-gray-400 text-sm mb-6">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={loadBooths}
             className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all shadow-lg"
           >
             إعادة المحاولة
@@ -571,8 +577,28 @@ export default function InteractiveMap() {
     );
   }
 
-  if (loading) {
-    return <SkeletonLoader />;
+  if (isEmpty) {
+    return (
+      <div className="relative w-screen h-screen overflow-hidden bg-[#020617] flex items-center justify-center p-8">
+        <div className="text-center max-w-sm">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <span className="text-3xl">🗺️</span>
+          </div>
+          <h2 className="text-white font-black text-lg mb-2">
+            لا توجد أكشاك للعرض بعد
+          </h2>
+          <p className="text-gray-400 text-sm mb-6">
+            لم تتم تهيئة أكشاك المعرض حتى الآن. تحقّق لاحقًا.
+          </p>
+          <button
+            onClick={loadBooths}
+            className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all shadow-lg"
+          >
+            تحديث
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

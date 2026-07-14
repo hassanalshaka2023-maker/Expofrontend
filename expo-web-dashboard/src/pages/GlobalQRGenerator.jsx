@@ -45,7 +45,12 @@ function BackgroundParticles() {
 }
 
 export default function GlobalQRGenerator() {
-  const [appUrl, setAppUrl] = useState("http://localhost:5173");
+  // Default visitor-map URL for the QR. Sourced from an env var so no LAN IP is
+  // baked into committed source; the admin can still edit it in the input.
+  // For a real phone QR, set VITE_VISITOR_APP_URL to http://<LAPTOP_IPV4>:5173/
+  const [appUrl, setAppUrl] = useState(
+    import.meta.env.VITE_VISITOR_APP_URL || "http://localhost:5173/",
+  );
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const qrRef = useRef(null);

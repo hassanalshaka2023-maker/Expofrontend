@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000';
+// API base URL comes from ONE environment variable (VITE_API_URL). Set it in
+// `.env.local` for LAN testing, e.g. http://<LAPTOP_IPV4>:3000. Falls back to
+// localhost for desktop dev. Trailing slashes are stripped so request URLs
+// never end up malformed (e.g. `//booths`).
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+).replace(/\/+$/, '');
 
 export const webApi = {
   login: async (email, password) => {

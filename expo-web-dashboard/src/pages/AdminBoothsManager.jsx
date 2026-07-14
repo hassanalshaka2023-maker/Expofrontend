@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Grid, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { webApi } from "../services/api";
 import WebBooth3D from "../components/WebBooth3D";
+import ExhibitionHallScene from "../components/exhibition/ExhibitionHallScene";
 import Button from "../components/ui/Button";
 import { BoothSkeleton, PanelSkeleton } from "../components/ui/Skeleton";
 
@@ -618,41 +619,17 @@ export default function AdminBoothsManager() {
           <color attach="background" args={["#020914"]} />
           <fog attach="fog" args={["#020914", 18, 55]} />
 
-          <ambientLight intensity={0.56} />
+          <ExhibitionHallScene booths={booths} />
 
-          <pointLight position={[10, 20, 10]} intensity={1.7} color="#20d8dc" />
-
-          <pointLight
-            position={[-12, 8, -10]}
-            intensity={0.75}
-            color="#d99145"
-          />
-
-          <directionalLight
-            position={[-20, 30, 20]}
-            intensity={1}
-            color="#ffffff"
-          />
-
-          <Grid
-            position={[0, -0.01, 0]}
-            args={[50, 50]}
-            cellSize={1}
-            cellThickness={0.55}
-            cellColor="#123140"
-            sectionSize={5}
-            sectionThickness={1.1}
-            sectionColor="#178795"
-            fadeDistance={40}
-          />
-
-          {booths.map((booth) => (
+          {booths.map((booth, index) => (
             <WebBooth3D
               key={booth.boothId}
+              index={index}
               id={booth.boothId}
               position={booth.position3D}
               status={booth.status}
               companyDetails={booth.companyDetails}
+              selected={selectedBooth?.boothId === booth.boothId}
               onSelect={() => setSelectedBooth(booth)}
               allowAllClicks
             />
