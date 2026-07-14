@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000';
+// API base URL comes from ONE environment variable (VITE_API_URL). Set it in
+// `.env.local` for LAN testing, e.g. http://<LAPTOP_IPV4>:3000. Falls back to
+// localhost for desktop dev. Trailing slashes are stripped so request URLs
+// never end up malformed (e.g. `//booths`).
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+).replace(/\/+$/, '');
 
 export const webApi = {
   login: async (email, password) => {
@@ -17,6 +23,22 @@ getAttendanceLogs: async () => {
   return response.data;
 },
 
+  // === Staff / Employee Management ===
+  // جلب جميع الموظفين
+  getStaff: async () => {
+    const response = await axios.get(`${API_BASE_URL}/users/staff`);
+    return response.data;
+  },
+  // إضافة موظف جديد
+  addStaff: async (name, email, password) => {
+    const response = await axios.post(`${API_BASE_URL}/auth/register/employee`, { name, email, password });
+    return response.data;
+  },
+  // توليد / تجديد QR token لموظف
+  generateStaffQR: async (staffId) => {
+    const response = await axios.post(`${API_BASE_URL}/users/staff/${staffId}/generate-qr`);
+    return response.data;
+  },
 
   // === حقول الأكشاك الجديدة ===
   // 1. جلب حالة الأكشاك الـ 12
