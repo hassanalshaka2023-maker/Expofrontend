@@ -318,9 +318,7 @@ export default function LandingPage() {
 
             <h1 className="hero-title hero-enter hero-enter-three">The New Era of Exhibitions.</h1>
 
-            <p className="hero-copy hero-enter hero-enter-three">
-              HOPEX connects organizers, investors, employees, and visitors through one intelligent platform designed to manage, explore, and transform every exhibition experience.
-            </p>
+            
 
             <div className="hero-actions hero-enter hero-enter-four">
               <Link to="/login" className="button button-primary button-large">
@@ -352,7 +350,7 @@ export default function LandingPage() {
               <li>Dani Almhnna</li>
               <li>Ruba Juha</li>
               <li>Hussien Hamdan</li>
-              <li>Baraa Sowah</li>
+              <li>Baraa AlSawah</li>
               <li>Hassan Alshaka</li>
             </ul>
           </div>

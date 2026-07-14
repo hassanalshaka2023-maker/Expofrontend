@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { BarChart3, Box, QrCode, LogOut } from 'lucide-react';
+import { BarChart3, Box, QrCode, Users, LogOut } from 'lucide-react';
 
 const tabs = [
   { key: 'logs', icon: BarChart3, label: 'سجل الحضور' },
   { key: 'booths', icon: Box, label: 'الأكشاك' },
+  { key: 'staff', icon: Users, label: 'الموظفين' },
   { key: 'qr', icon: QrCode, label: 'QR الزوار' },
 ];
 
