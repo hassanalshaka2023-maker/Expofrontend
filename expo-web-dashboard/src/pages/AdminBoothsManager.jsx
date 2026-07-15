@@ -415,7 +415,7 @@ export default function AdminBoothsManager() {
             width: 100%;
             min-height: 100vh;
             display: flex;
-            background: #020914;
+            background: var(--hx-bg, #eef4fb);
           }
 
           .admin-loading-canvas {
@@ -425,8 +425,8 @@ export default function AdminBoothsManager() {
 
           .admin-loading-panel {
             width: 440px;
-            border-left: 1px solid rgba(32, 216, 220, 0.14);
-            background: #03101e;
+            border-left: 1px solid rgba(11, 147, 166, 0.2);
+            background: #ffffff;
           }
 
           @media (max-width: 920px) {
@@ -442,7 +442,7 @@ export default function AdminBoothsManager() {
               width: 100%;
               min-height: 420px;
               border-left: 0;
-              border-top: 1px solid rgba(32, 216, 220, 0.14);
+              border-top: 1px solid rgba(11, 147, 166, 0.2);
             }
           }
         `}</style>
@@ -461,9 +461,9 @@ export default function AdminBoothsManager() {
           <motion.div
             animate={{
               boxShadow: [
-                "0 0 0 rgba(255,112,89,0)",
-                "0 0 30px rgba(255,112,89,.2)",
-                "0 0 0 rgba(255,112,89,0)",
+                "0 0 0 rgba(214,69,69,0)",
+                "0 0 30px rgba(214,69,69,.2)",
+                "0 0 0 rgba(214,69,69,0)",
               ],
             }}
             transition={{ duration: 2.4, repeat: Infinity }}
@@ -487,7 +487,7 @@ export default function AdminBoothsManager() {
             display: grid;
             place-items: center;
             padding: 32px;
-            background: #020914;
+            background: var(--hx-bg, #eef4fb);
             font-family: Inter, sans-serif;
           }
 
@@ -502,10 +502,10 @@ export default function AdminBoothsManager() {
             margin: 0 auto 24px;
             display: grid;
             place-items: center;
-            border: 1px solid rgba(255, 112, 89, 0.25);
+            border: 1px solid rgba(214, 69, 69, 0.3);
             border-radius: 22px;
-            color: #ff7059;
-            background: rgba(255, 112, 89, 0.08);
+            color: #d64545;
+            background: rgba(214, 69, 69, 0.08);
           }
 
           .admin-error-icon svg {
@@ -515,12 +515,12 @@ export default function AdminBoothsManager() {
 
           .admin-error-content h2 {
             margin: 0 0 10px;
-            color: white;
+            color: var(--hx-text, #0d2338);
           }
 
           .admin-error-content p {
             margin: 0 0 24px;
-            color: rgba(188, 203, 220, 0.6);
+            color: var(--hx-muted, #55697d);
           }
         `}</style>
       </div>
@@ -797,8 +797,8 @@ export default function AdminBoothsManager() {
           position: relative;
           display: flex;
           overflow: hidden;
-          color: #f6f9fd;
-          background: #020914;
+          color: var(--hx-text, #0d2338);
+          background: var(--hx-bg, #eef4fb);
           font-family: 'Inter', sans-serif;
           isolation: isolate;
         }
@@ -814,10 +814,10 @@ export default function AdminBoothsManager() {
         .admin-grid-background {
           position: absolute;
           inset: 0;
-          opacity: 0.18;
+          opacity: 0.5;
           background-image:
-            linear-gradient(rgba(32,216,220,.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(32,216,220,.04) 1px, transparent 1px);
+            linear-gradient(rgba(11,147,166,.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(11,147,166,.05) 1px, transparent 1px);
           background-size: 78px 78px;
           animation: adminGridMove 32s linear infinite;
         }
@@ -835,8 +835,8 @@ export default function AdminBoothsManager() {
           height: 520px;
           right: -180px;
           top: 100px;
-          opacity: .1;
-          background: #09b8c6;
+          opacity: .16;
+          background: #17d9d4;
           animation: adminCyanOrb 15s ease-in-out infinite alternate;
         }
 
@@ -845,8 +845,8 @@ export default function AdminBoothsManager() {
           height: 420px;
           left: -170px;
           bottom: -120px;
-          opacity: .08;
-          background: #c87835;
+          opacity: .14;
+          background: #e6be6a;
           animation: adminGoldOrb 13s ease-in-out infinite alternate;
         }
 
@@ -862,8 +862,8 @@ export default function AdminBoothsManager() {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 11px rgba(229,160,82,.75);
+          background: #d2aa55;
+          box-shadow: 0 0 11px rgba(210,170,85,.6);
         }
 
         .booths-canvas-section {
@@ -873,8 +873,8 @@ export default function AdminBoothsManager() {
           flex: 1;
           overflow: hidden;
           background:
-            radial-gradient(circle at 70% 20%, rgba(5, 79, 91, .12), transparent 35%),
-            #020914;
+            radial-gradient(circle at 70% 20%, rgba(10, 162, 180, .1), transparent 35%),
+            var(--hx-bg, #eef4fb);
         }
 
         .canvas-wave-lines {
@@ -892,7 +892,7 @@ export default function AdminBoothsManager() {
           position: absolute;
           width: 100%;
           height: 64px;
-          border-top: 1px solid rgba(217,145,69,.28);
+          border-top: 1px solid rgba(169,121,31,.26);
           border-radius: 50%;
           animation: adminLightLineMove 6s ease-in-out infinite;
         }
@@ -924,14 +924,14 @@ export default function AdminBoothsManager() {
           position: relative;
           overflow: hidden;
           padding: 16px 18px;
-          border: 1px solid rgba(32,216,220,.28);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 18px;
           background:
-            linear-gradient(145deg, rgba(8,38,53,.88), rgba(3,17,30,.92));
+            linear-gradient(145deg, rgba(255,255,255,.92), rgba(243,248,253,.88));
           backdrop-filter: blur(20px);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.05),
-            0 18px 42px rgba(0,0,0,.28);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 18px 42px rgba(20,55,95,.12);
         }
 
         .canvas-info-shimmer,
@@ -940,7 +940,7 @@ export default function AdminBoothsManager() {
           inset: 0;
           pointer-events: none;
           background:
-            linear-gradient(120deg, transparent 20%, rgba(255,255,255,.07), transparent 70%);
+            linear-gradient(120deg, transparent 20%, rgba(11,147,166,.06), transparent 70%);
         }
 
         .canvas-info-card strong {
@@ -949,14 +949,14 @@ export default function AdminBoothsManager() {
           display: flex;
           align-items: center;
           gap: 9px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 15px;
         }
 
         .canvas-info-card strong svg {
           width: 19px;
           height: 19px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .canvas-info-card p {
@@ -966,14 +966,14 @@ export default function AdminBoothsManager() {
           display: flex;
           align-items: center;
           gap: 7px;
-          color: rgba(181,197,215,.58);
+          color: var(--hx-muted, #55697d);
           font-size: 11px;
         }
 
         .canvas-info-card p svg {
           width: 14px;
           height: 14px;
-          color: #e5a052;
+          color: #b0832e;
         }
 
         .booth-legend {
@@ -981,9 +981,9 @@ export default function AdminBoothsManager() {
           align-items: center;
           gap: 18px;
           padding: 11px 15px;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 15px;
-          background: rgba(3,20,34,.8);
+          background: rgba(255,255,255,.88);
           backdrop-filter: blur(18px);
         }
 
@@ -1000,7 +1000,7 @@ export default function AdminBoothsManager() {
         }
 
         .booth-legend small {
-          color: rgba(183,198,216,.58);
+          color: var(--hx-muted, #55697d);
           font-size: 10px;
         }
 
@@ -1030,24 +1030,24 @@ export default function AdminBoothsManager() {
           gap: 10px;
           padding: 0 20px;
           overflow: hidden;
-          border: 1px solid rgba(229,160,82,.56);
+          border: 1px solid rgba(210,170,85,.6);
           border-radius: 16px;
-          color: #f5f8fc;
+          color: var(--hx-navy, #0c3455);
           background:
-            linear-gradient(145deg, rgba(24,45,56,.76), rgba(4,18,31,.9));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.07),
-            0 14px 32px rgba(0,0,0,.3);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 14px 32px rgba(20,55,95,.12);
           font-weight: 700;
           cursor: pointer;
           transition: .35s ease;
         }
 
         .canvas-refresh:hover {
-          border-color: rgba(241,183,107,.92);
+          border-color: rgba(169,121,31,.8);
           box-shadow:
-            0 20px 38px rgba(0,0,0,.35),
-            0 0 25px rgba(217,145,69,.12);
+            0 20px 38px rgba(20,55,95,.18),
+            0 0 25px rgba(210,170,85,.2);
         }
 
         .canvas-refresh svg {
@@ -1065,7 +1065,7 @@ export default function AdminBoothsManager() {
           position: absolute;
           right: -22px;
           border: 1px solid transparent;
-          border-top-color: rgba(217,145,69,.5);
+          border-top-color: rgba(178,134,45,.5);
           border-radius: 50%;
           animation: adminSpin 7s linear infinite;
         }
@@ -1076,7 +1076,7 @@ export default function AdminBoothsManager() {
           z-index: 20;
           display: grid;
           place-items: center;
-          background: rgba(2,9,20,.76);
+          background: rgba(238,244,251,.72);
           backdrop-filter: blur(8px);
         }
 
@@ -1092,8 +1092,8 @@ export default function AdminBoothsManager() {
           position: absolute;
           inset: 0;
           border: 1px solid transparent;
-          border-top-color: #20d8dc;
-          border-right-color: rgba(217,145,69,.55);
+          border-top-color: #0aa2b4;
+          border-right-color: rgba(178,134,45,.55);
           border-radius: 50%;
         }
 
@@ -1101,14 +1101,14 @@ export default function AdminBoothsManager() {
           inset: 17px;
           border-top-color: transparent;
           border-right-color: transparent;
-          border-bottom-color: rgba(32,216,220,.72);
-          border-left-color: #e3a04f;
+          border-bottom-color: rgba(10,162,180,.7);
+          border-left-color: #b0832e;
         }
 
         .action-loader svg {
           width: 30px;
           height: 30px;
-          color: #20d8dc;
+          color: #0aa2b4;
         }
 
         .canvas-bottom-light {
@@ -1119,7 +1119,7 @@ export default function AdminBoothsManager() {
           bottom: 0;
           z-index: 5;
           background:
-            linear-gradient(90deg, transparent, rgba(32,216,220,.8), rgba(217,145,69,.65), transparent);
+            linear-gradient(90deg, transparent, rgba(10,162,180,.65), rgba(210,170,85,.55), transparent);
         }
 
         .booths-control-panel {
@@ -1130,11 +1130,11 @@ export default function AdminBoothsManager() {
           flex: 0 0 auto;
           flex-direction: column;
           overflow: hidden;
-          border-left: 1px solid rgba(32,216,220,.2);
+          border-left: 1px solid var(--hx-line, rgba(14,55,92,.12));
           background:
-            linear-gradient(180deg, rgba(6,24,39,.97), rgba(2,13,25,.99));
+            linear-gradient(180deg, rgba(255,255,255,.96), rgba(243,248,253,.98));
           backdrop-filter: blur(24px);
-          box-shadow: -22px 0 50px rgba(0,0,0,.24);
+          box-shadow: -22px 0 50px rgba(20,55,95,.1);
         }
 
         .panel-orb-cyan {
@@ -1142,8 +1142,8 @@ export default function AdminBoothsManager() {
           height: 240px;
           right: -90px;
           top: -80px;
-          opacity: .08;
-          background: #20d8dc;
+          opacity: .14;
+          background: #17d9d4;
         }
 
         .panel-orb-gold {
@@ -1151,15 +1151,15 @@ export default function AdminBoothsManager() {
           height: 220px;
           left: -90px;
           bottom: -90px;
-          opacity: .06;
-          background: #d99145;
+          opacity: .12;
+          background: #e6be6a;
         }
 
         .control-panel-header {
           position: relative;
           z-index: 2;
           padding: 24px;
-          border-bottom: 1px solid rgba(255,255,255,.07);
+          border-bottom: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
         }
 
         .panel-title-row {
@@ -1174,14 +1174,14 @@ export default function AdminBoothsManager() {
           display: flex;
           align-items: center;
           gap: 10px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 18px;
         }
 
         .panel-title-row h2 svg {
           width: 20px;
           height: 20px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .stats-toggle {
@@ -1189,17 +1189,17 @@ export default function AdminBoothsManager() {
           height: 42px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 13px;
-          color: rgba(178,194,213,.48);
-          background: rgba(255,255,255,.025);
+          color: var(--hx-muted, #55697d);
+          background: var(--hx-panel-strong, #ffffff);
           cursor: pointer;
           transition: .3s ease;
         }
 
         .stats-toggle:hover {
-          color: white;
-          border-color: rgba(32,216,220,.26);
+          color: var(--hx-text, #0d2338);
+          border-color: rgba(11,147,166,.35);
         }
 
         .stats-toggle svg {
@@ -1220,8 +1220,8 @@ export default function AdminBoothsManager() {
         }
 
         .admin-stat-card {
-          --stat-color: #20d8dc;
-          --stat-rgb: 32,216,220;
+          --stat-color: #0b93a6;
+          --stat-rgb: 11,147,166;
           min-width: 0;
           min-height: 118px;
           position: relative;
@@ -1230,31 +1230,31 @@ export default function AdminBoothsManager() {
           gap: 12px;
           overflow: hidden;
           padding: 15px 12px 22px;
-          border: 1px solid rgba(var(--stat-rgb),.28);
+          border: 1px solid rgba(var(--stat-rgb),.3);
           border-radius: 16px;
           background:
-            linear-gradient(145deg, rgba(15,36,50,.8), rgba(4,18,31,.9));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.04),
-            0 14px 30px rgba(0,0,0,.2);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 14px 30px rgba(20,55,95,.08);
           transition: .35s ease;
         }
 
         .admin-stat-card:hover {
-          border-color: rgba(var(--stat-rgb),.65);
+          border-color: rgba(var(--stat-rgb),.6);
           box-shadow:
-            0 20px 35px rgba(0,0,0,.28),
-            0 0 24px rgba(var(--stat-rgb),.08);
+            0 20px 35px rgba(20,55,95,.14),
+            0 0 24px rgba(var(--stat-rgb),.12);
         }
 
         .admin-stat-green {
-          --stat-color: #16d8a0;
-          --stat-rgb: 22,216,160;
+          --stat-color: #0f9d76;
+          --stat-rgb: 15,157,118;
         }
 
         .admin-stat-gold {
-          --stat-color: #e3a04f;
-          --stat-rgb: 227,160,79;
+          --stat-color: #b0832e;
+          --stat-rgb: 176,131,46;
         }
 
         .admin-stat-glow {
@@ -1273,7 +1273,7 @@ export default function AdminBoothsManager() {
           inset: 0;
           opacity: 0;
           background:
-            linear-gradient(120deg, transparent 20%, rgba(255,255,255,.08), transparent 70%);
+            linear-gradient(120deg, transparent 20%, rgba(var(--stat-rgb),.08), transparent 70%);
           transform: translateX(-120%);
         }
 
@@ -1311,7 +1311,7 @@ export default function AdminBoothsManager() {
         }
 
         .admin-stat-copy span {
-          color: rgba(205,216,230,.55);
+          color: var(--hx-muted-strong, #3c516a);
           font-size: 9px;
           font-weight: 700;
           line-height: 1.3;
@@ -1319,7 +1319,7 @@ export default function AdminBoothsManager() {
         }
 
         .admin-stat-copy strong {
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 22px;
           line-height: 1;
           font-variant-numeric: tabular-nums;
@@ -1361,7 +1361,7 @@ export default function AdminBoothsManager() {
           overflow-y: auto;
           padding: 24px;
           scrollbar-width: thin;
-          scrollbar-color: rgba(32,216,220,.3) rgba(255,255,255,.02);
+          scrollbar-color: rgba(10,162,180,.4) rgba(13,35,56,.05);
         }
 
         .control-panel-content::-webkit-scrollbar {
@@ -1369,22 +1369,22 @@ export default function AdminBoothsManager() {
         }
 
         .control-panel-content::-webkit-scrollbar-track {
-          background: rgba(255,255,255,.02);
+          background: rgba(13,35,56,.05);
         }
 
         .control-panel-content::-webkit-scrollbar-thumb {
           border-radius: 999px;
           background:
-            linear-gradient(180deg, rgba(32,216,220,.48), rgba(217,145,69,.42));
+            linear-gradient(180deg, rgba(10,162,180,.45), rgba(210,170,85,.4));
         }
 
         .admin-error-message {
           margin-bottom: 18px;
           padding: 13px;
-          border: 1px solid rgba(255,112,89,.24);
+          border: 1px solid rgba(214,69,69,.3);
           border-radius: 13px;
-          color: #ff8b78;
-          background: rgba(255,112,89,.08);
+          color: #b4372a;
+          background: rgba(214,69,69,.08);
           text-align: center;
           font-size: 12px;
         }
@@ -1406,14 +1406,14 @@ export default function AdminBoothsManager() {
           display: flex;
           align-items: center;
           gap: 9px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 18px;
         }
 
         .booth-detail-header h3 svg {
           width: 20px;
           height: 20px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .detail-close {
@@ -1421,18 +1421,18 @@ export default function AdminBoothsManager() {
           height: 38px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 50%;
-          color: rgba(183,198,216,.45);
-          background: rgba(255,255,255,.025);
+          color: var(--hx-muted, #55697d);
+          background: var(--hx-panel-strong, #ffffff);
           font-size: 20px;
           cursor: pointer;
           transition: .3s ease;
         }
 
         .detail-close:hover {
-          color: white;
-          border-color: rgba(32,216,220,.24);
+          color: var(--hx-text, #0d2338);
+          border-color: rgba(11,147,166,.35);
         }
 
         .booth-status {
@@ -1461,34 +1461,34 @@ export default function AdminBoothsManager() {
         }
 
         .status-available {
-          color: #16d8a0;
-          border-color: rgba(22,216,160,.22);
-          background: rgba(22,216,160,.075);
+          color: #067a53;
+          border-color: rgba(15,157,118,.3);
+          background: rgba(15,157,118,.1);
         }
 
         .status-pending {
-          color: #e3a04f;
-          border-color: rgba(227,160,79,.22);
-          background: rgba(227,160,79,.075);
+          color: #a9791f;
+          border-color: rgba(169,121,31,.3);
+          background: rgba(210,170,85,.14);
         }
 
         .status-reserved {
-          color: #ff7059;
-          border-color: rgba(255,112,89,.22);
-          background: rgba(255,112,89,.075);
+          color: #b4372a;
+          border-color: rgba(214,69,69,.28);
+          background: rgba(214,69,69,.08);
         }
 
         .company-card {
           position: relative;
           overflow: hidden;
           padding: 20px;
-          border: 1px solid rgba(32,216,220,.18);
+          border: 1px solid rgba(11,147,166,.25);
           border-radius: 20px;
           background:
-            linear-gradient(145deg, rgba(8,35,49,.9), rgba(3,17,30,.94));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.04),
-            0 18px 40px rgba(0,0,0,.22);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 18px 40px rgba(20,55,95,.1);
         }
 
         .company-orb {
@@ -1503,7 +1503,7 @@ export default function AdminBoothsManager() {
           height: 130px;
           right: -55px;
           top: -55px;
-          background: rgba(32,216,220,.1);
+          background: rgba(23,217,212,.14);
         }
 
         .company-orb-gold {
@@ -1511,7 +1511,7 @@ export default function AdminBoothsManager() {
           height: 120px;
           left: -55px;
           bottom: -55px;
-          background: rgba(217,145,69,.08);
+          background: rgba(210,170,85,.12);
         }
 
         .company-main {
@@ -1528,11 +1528,11 @@ export default function AdminBoothsManager() {
           display: grid;
           place-items: center;
           flex: 0 0 auto;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 15px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
           background:
-            linear-gradient(145deg, rgba(32,216,220,.14), rgba(217,145,69,.06));
+            linear-gradient(145deg, rgba(23,217,212,.14), rgba(210,170,85,.08));
         }
 
         .company-icon svg {
@@ -1550,7 +1550,7 @@ export default function AdminBoothsManager() {
         .company-copy span,
         .company-info-box > span,
         .company-description > span {
-          color: rgba(227,160,79,.7);
+          color: var(--hx-gold, #a9791f);
           font-size: 9px;
           font-weight: 700;
           letter-spacing: .1em;
@@ -1559,7 +1559,7 @@ export default function AdminBoothsManager() {
 
         .company-copy strong {
           overflow: hidden;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 16px;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -1576,9 +1576,9 @@ export default function AdminBoothsManager() {
 
         .company-info-box {
           padding: 13px;
-          border: 1px solid rgba(255,255,255,.06);
+          border: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           border-radius: 13px;
-          background: rgba(255,255,255,.025);
+          background: rgba(13,35,56,.03);
         }
 
         .company-info-box strong {
@@ -1586,14 +1586,14 @@ export default function AdminBoothsManager() {
           display: flex;
           align-items: center;
           gap: 7px;
-          color: rgba(235,241,249,.82);
+          color: #33475a;
           font-size: 11px;
         }
 
         .company-info-box strong svg {
           width: 13px;
           height: 13px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .company-description {
@@ -1601,14 +1601,14 @@ export default function AdminBoothsManager() {
           z-index: 2;
           margin-top: 11px;
           padding: 13px;
-          border: 1px solid rgba(255,255,255,.06);
+          border: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           border-radius: 13px;
-          background: rgba(0,0,0,.12);
+          background: rgba(13,35,56,.04);
         }
 
         .company-description p {
           margin: 8px 0 0;
-          color: rgba(204,216,230,.7);
+          color: var(--hx-muted, #55697d);
           font-size: 12px;
           line-height: 1.65;
         }
@@ -1629,15 +1629,15 @@ export default function AdminBoothsManager() {
         }
 
         .status-message-available {
-          color: #16d8a0;
-          border-color: rgba(22,216,160,.16);
-          background: rgba(22,216,160,.055);
+          color: #067a53;
+          border-color: rgba(15,157,118,.25);
+          background: rgba(15,157,118,.08);
         }
 
         .status-message-reserved {
-          color: #ff7059;
-          border-color: rgba(255,112,89,.16);
-          background: rgba(255,112,89,.055);
+          color: #b4372a;
+          border-color: rgba(214,69,69,.22);
+          background: rgba(214,69,69,.06);
         }
 
         .admin-empty-state {
@@ -1663,8 +1663,8 @@ export default function AdminBoothsManager() {
           position: absolute;
           inset: 0;
           border: 1px solid transparent;
-          border-top-color: #20d8dc;
-          border-right-color: rgba(217,145,69,.42);
+          border-top-color: #0aa2b4;
+          border-right-color: rgba(178,134,45,.45);
           border-radius: 50%;
         }
 
@@ -1672,8 +1672,8 @@ export default function AdminBoothsManager() {
           inset: 15px;
           border-top-color: transparent;
           border-right-color: transparent;
-          border-bottom-color: rgba(32,216,220,.48);
-          border-left-color: #e3a04f;
+          border-bottom-color: rgba(10,162,180,.5);
+          border-left-color: #b0832e;
         }
 
         .empty-booth-orbit > div {
@@ -1681,12 +1681,12 @@ export default function AdminBoothsManager() {
           height: 66px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 19px;
-          color: rgba(32,216,220,.7);
+          color: var(--hx-cyan, #0b93a6);
           background:
-            linear-gradient(145deg, rgba(32,216,220,.12), rgba(217,145,69,.05));
-          box-shadow: 0 0 28px rgba(32,216,220,.08);
+            linear-gradient(145deg, rgba(23,217,212,.12), rgba(210,170,85,.07));
+          box-shadow: 0 0 28px rgba(23,217,212,.12);
         }
 
         .empty-booth-orbit svg {
@@ -1696,14 +1696,14 @@ export default function AdminBoothsManager() {
 
         .admin-empty-state h3 {
           margin: 0 0 10px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 17px;
         }
 
         .admin-empty-state p {
           max-width: 310px;
           margin: 0;
-          color: rgba(168,185,205,.48);
+          color: #7a8ea0;
           font-size: 12px;
           line-height: 1.65;
         }
@@ -1716,8 +1716,8 @@ export default function AdminBoothsManager() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          border-top: 1px solid rgba(255,255,255,.065);
-          color: rgba(156,176,198,.38);
+          border-top: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
+          color: rgba(85,105,125,.7);
           font-size: 10px;
         }
 
@@ -1725,8 +1725,8 @@ export default function AdminBoothsManager() {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #d99145;
-          box-shadow: 0 0 8px rgba(217,145,69,.7);
+          background: #d2aa55;
+          box-shadow: 0 0 8px rgba(210,170,85,.6);
         }
 
         @keyframes adminGridMove {
@@ -1790,7 +1790,7 @@ export default function AdminBoothsManager() {
             width: 100%;
             height: auto;
             min-height: 560px;
-            border-top: 1px solid rgba(32,216,220,.2);
+            border-top: 1px solid var(--hx-line, rgba(14,55,92,.12));
             border-left: 0;
           }
 

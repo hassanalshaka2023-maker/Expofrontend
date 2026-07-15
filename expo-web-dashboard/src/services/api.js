@@ -35,31 +35,30 @@ export const webApi = {
     return response.data;
   },
 
-<<<<<<< HEAD
-  // === Booths ===
-  // Public read of the whole exhibition map (used by Admin, Investor AND the
-  // public Visitor map — this endpoint is already public/read-only server-side).
-=======
   // === Staff / Employee Management ===
-  // جلب جميع الموظفين
+  // List all staff members.
   getStaff: async () => {
-    const response = await axios.get(`${API_BASE_URL}/users/staff`);
+    const response = await http.get("/users/staff");
     return response.data;
   },
-  // إضافة موظف جديد
+  // Add a new staff member (employee).
   addStaff: async (name, email, password) => {
-    const response = await axios.post(`${API_BASE_URL}/auth/register/employee`, { name, email, password });
+    const response = await http.post("/auth/register/employee", {
+      name,
+      email,
+      password,
+    });
     return response.data;
   },
-  // توليد / تجديد QR token لموظف
+  // Generate / refresh a staff member's QR token.
   generateStaffQR: async (staffId) => {
-    const response = await axios.post(`${API_BASE_URL}/users/staff/${staffId}/generate-qr`);
+    const response = await http.post(`/users/staff/${staffId}/generate-qr`);
     return response.data;
   },
 
-  // === حقول الأكشاك الجديدة ===
-  // 1. جلب حالة الأكشاك الـ 12
->>>>>>> d2f79b6a0ee277776168614cf1ba1aede6f0ab30
+  // === Booths ===
+  // Public read of the whole exhibition map (used by Admin, Investor AND the
+  // public Visitor map — this endpoint is already public/read-only server-side).
   getBooths: async () => {
     const response = await http.get("/booths");
     return response.data;
@@ -71,7 +70,6 @@ export const webApi = {
   },
   // Admin: approve a pending reservation.
   approveBooth: async (boothId) => {
-<<<<<<< HEAD
     const response = await http.post(`/booths/approve/${boothId}`);
     return response.data;
   },
@@ -81,14 +79,3 @@ export const webApi = {
     return response.data;
   },
 };
-=======
-  const response = await axios.post(`${API_BASE_URL}/booths/approve/${boothId}`);
-  return response.data;
-},
-rejectBooth: async (boothId) => {
-  const response = await axios.post(`${API_BASE_URL}/booths/reject/${boothId}`);
-  return response.data;
-}
-
-};
->>>>>>> d2f79b6a0ee277776168614cf1ba1aede6f0ab30

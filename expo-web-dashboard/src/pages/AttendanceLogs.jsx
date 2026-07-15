@@ -57,7 +57,11 @@ function AnimatedNumber({ value }) {
     const from = previousValue.current;
     const to = Number(value) || 0;
     const startedAt = performance.now();
-    const duration = 620;
+    // Reduced motion: the real final value lands on the very first frame.
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches
+      ? 1
+      : 620;
     let frameId;
 
     const animate = (currentTime) => {
@@ -202,8 +206,9 @@ export default function AttendanceLogs() {
             place-content: center;
             justify-items: center;
             gap: 20px;
-            color: rgba(203,216,231,.55);
+            color: var(--hx-muted, #55697d);
             font-family: 'Inter', sans-serif;
+            background: var(--hx-bg, #eef4fb);
           }
 
           .loader-rings {
@@ -219,8 +224,8 @@ export default function AttendanceLogs() {
             inset: 0;
             border-radius: 50%;
             border: 1px solid transparent;
-            border-top-color: #20d8dc;
-            border-right-color: rgba(217,145,69,.48);
+            border-top-color: #0aa2b4;
+            border-right-color: rgba(178,134,45,.5);
             animation: loaderSpin 2.2s linear infinite;
           }
 
@@ -238,7 +243,7 @@ export default function AttendanceLogs() {
           .loader-rings svg {
             width: 34px;
             height: 34px;
-            stroke: #20d8dc;
+            stroke: #0aa2b4;
             stroke-width: 1.5;
           }
 
@@ -271,6 +276,21 @@ export default function AttendanceLogs() {
           <span />
           <span />
           <span />
+        </div>
+
+        {/* Decorative cinematic exhibition panel (visual only, wide screens) */}
+        <div className="hero-visual" aria-hidden="true">
+          <div className="hero-visual-frame">
+            <img
+              src="/assets/exhibition-hub.jpg"
+              alt=""
+              loading="lazy"
+              draggable="false"
+            />
+            <span className="hero-visual-sweep" />
+          </div>
+          <span className="hero-visual-halo" />
+          <span className="hero-visual-base" />
         </div>
 
         <div className="hero-controls">
@@ -473,8 +493,12 @@ export default function AttendanceLogs() {
         .attendance-page {
           position: relative;
           padding: 48px 0 10px;
-          color: #f6f9fd;
+          color: var(--hx-text, #0d2338);
           font-family: 'Inter', sans-serif;
+          background:
+            radial-gradient(circle at 14% 8%, rgba(10,162,180,.07), transparent 30%),
+            radial-gradient(circle at 90% 20%, rgba(210,170,85,.05), transparent 26%),
+            var(--hx-bg, #eef4fb);
         }
 
         .hero-section {
@@ -505,14 +529,14 @@ export default function AttendanceLogs() {
           width: 9px;
           height: 9px;
           transform: rotate(45deg);
-          background: #e5a052;
-          box-shadow: 0 0 12px rgba(229,160,82,.55);
+          background: #d2aa55;
+          box-shadow: 0 0 12px rgba(210,170,85,.5);
         }
 
         .hero-line {
           width: 74px;
           height: 1px;
-          background: linear-gradient(90deg, #d99145, transparent);
+          background: linear-gradient(90deg, #d2aa55, transparent);
         }
 
         .hero-copy h1 {
@@ -529,21 +553,51 @@ export default function AttendanceLogs() {
         }
 
         .hero-copy h1 span {
-          color: #f4f6fa;
+          color: var(--hx-text, #0d2338);
+          animation: heroWordIn .75s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .12s both;
         }
 
         .hero-copy h1 em {
-          color: #20d8dc;
           font-style: normal;
           font-weight: 600;
-          text-shadow: 0 0 28px rgba(32,216,220,.16);
+          color: #0b93a6;
+          background: linear-gradient(105deg, #0b93a6 30%, #17d9d4 50%, #0b93a6 70%);
+          background-size: 240% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 0 28px rgba(23,217,212,.22);
+          animation:
+            heroWordIn .75s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .26s both,
+            heroEmSheen 1.6s ease-in-out 1.05s both;
+        }
+
+        @keyframes heroWordIn {
+          from { opacity: 0; transform: translateY(26px); filter: blur(6px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes heroEmSheen {
+          from { background-position: 130% 0; }
+          to { background-position: 0% 0; }
         }
 
         .hero-copy p {
           margin: 24px 0 0;
           padding-left: 224px;
-          color: rgba(181,197,215,.62);
+          color: var(--hx-muted, #55697d);
           font-size: 18px;
+          animation: heroEnter .7s ease .38s both;
+        }
+
+        .hero-decoration {
+          transform-origin: left center;
+          animation: heroDecoIn .6s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .05s both;
+        }
+
+        @keyframes heroDecoIn {
+          from { opacity: 0; transform: scaleX(.35); }
+          to { opacity: 1; transform: scaleX(1); }
         }
 
         .hero-light-lines {
@@ -560,7 +614,7 @@ export default function AttendanceLogs() {
           position: absolute;
           width: 100%;
           height: 62px;
-          border-top: 1px solid rgba(217,145,69,.32);
+          border-top: 1px solid rgba(169,121,31,.26);
           border-radius: 50%;
           animation: lightLineMove 6s ease-in-out infinite;
         }
@@ -575,6 +629,136 @@ export default function AttendanceLogs() {
           top: 40px;
           opacity: .28;
           animation-delay: -2.4s;
+        }
+
+        /* --- Cinematic exhibition image panel (decorative, wide screens) --- */
+        .hero-visual {
+          display: none;
+          position: absolute;
+          z-index: 2;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -52%);
+          width: 358px;
+          pointer-events: none;
+        }
+
+        .hero-visual-frame {
+          position: relative;
+          overflow: hidden;
+          border-radius: 18px;
+          aspect-ratio: 21 / 9;
+          border: 1px solid rgba(11,147,166,.3);
+          background: #dfeaf4;
+          box-shadow:
+            0 26px 54px rgba(20,55,95,.18),
+            inset 0 1px 0 rgba(255,255,255,.7);
+          animation:
+            heroVisualIn 1s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .45s both,
+            heroVisualFloat 9s ease-in-out 3s infinite;
+        }
+
+        /* Light integration overlay: HOPEX tint + white edge fade so the
+           photo merges with the bright report header (static, no motion). */
+        .hero-visual-frame::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          pointer-events: none;
+          background:
+            var(--hx-image-tint, linear-gradient(160deg, rgba(23,217,212,.12), rgba(124,92,255,.07) 45%, rgba(255,255,255,0) 62%)),
+            var(--hx-image-overlay, linear-gradient(180deg, rgba(255,255,255,0) 48%, rgba(238,244,251,.55) 84%, rgba(238,244,251,.85) 100%));
+        }
+
+        @keyframes heroVisualIn {
+          0% {
+            opacity: 0;
+            transform: translateY(20px) scale(.96);
+            clip-path: inset(10% 88% 10% 0 round 18px);
+          }
+          55% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            clip-path: inset(0 0 0 0 round 18px);
+          }
+        }
+
+        @keyframes heroVisualFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+
+        .hero-visual-frame img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          animation: heroVisualSettle 2.2s var(--hx-ease-soft, cubic-bezier(.2,.8,.2,1)) .5s both;
+        }
+
+        @keyframes heroVisualSettle {
+          from { transform: scale(1.12); filter: brightness(1.05); }
+          to { transform: scale(1); filter: brightness(1); }
+        }
+
+        .hero-visual-sweep {
+          position: absolute;
+          inset: 0;
+          z-index: 3;
+          background:
+            linear-gradient(115deg, transparent 32%, rgba(255,255,255,.42) 49%, rgba(23,217,212,.16) 56%, transparent 72%);
+          transform: translateX(-130%) skewX(-8deg);
+          animation: heroVisualSweep 1.15s ease-in-out 1.5s both;
+        }
+
+        @keyframes heroVisualSweep {
+          from { transform: translateX(-130%) skewX(-8deg); }
+          to { transform: translateX(130%) skewX(-8deg); }
+        }
+
+        .hero-visual-halo {
+          position: absolute;
+          inset: -26px -30px;
+          border-radius: 40px;
+          background:
+            radial-gradient(60% 75% at 50% 55%, rgba(23,217,212,.26), rgba(210,170,85,.12) 55%, transparent 78%);
+          filter: blur(16px);
+          opacity: 0;
+          animation: heroVisualHalo 2.6s ease-in-out 1.6s both;
+        }
+
+        @keyframes heroVisualHalo {
+          0% { opacity: 0; }
+          35% { opacity: 1; }
+          100% { opacity: .26; }
+        }
+
+        .hero-visual-base {
+          position: absolute;
+          left: 50%;
+          bottom: -14px;
+          width: 74%;
+          height: 2px;
+          transform: translateX(-50%);
+          border-radius: 999px;
+          background:
+            linear-gradient(90deg, transparent, rgba(10,162,180,.65), rgba(210,170,85,.55), transparent);
+          box-shadow: 0 0 14px rgba(23,217,212,.28);
+          animation: heroVisualBase .9s var(--hx-ease, cubic-bezier(.16,1,.3,1)) 1.35s both;
+        }
+
+        @keyframes heroVisualBase {
+          from { opacity: 0; transform: translateX(-50%) scaleX(.3); }
+          to { opacity: 1; transform: translateX(-50%) scaleX(1); }
+        }
+
+        @media (min-width: 1500px) {
+          .hero-visual {
+            display: block;
+          }
         }
 
         .hero-controls {
@@ -601,12 +785,12 @@ export default function AttendanceLogs() {
           align-items: center;
           justify-content: center;
           gap: 11px;
-          border: 1px solid rgba(32,216,220,.37);
+          border: 1px solid rgba(11,147,166,.35);
           border-radius: 999px;
-          color: #20d8dc;
-          background: rgba(3,27,42,.78);
+          color: var(--hx-cyan, #0b93a6);
+          background: rgba(255,255,255,.85);
           text-transform: uppercase;
-          box-shadow: inset 0 0 20px rgba(32,216,220,.04);
+          box-shadow: inset 0 0 20px rgba(23,217,212,.06), 0 10px 26px rgba(20,55,95,.08);
         }
 
         .live-sync-pill strong {
@@ -618,8 +802,8 @@ export default function AttendanceLogs() {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: #20d8dc;
-          box-shadow: 0 0 14px rgba(32,216,220,.82);
+          background: #0aa2b4;
+          box-shadow: 0 0 14px rgba(23,217,212,.6);
           animation: livePulse 1.5s ease-in-out infinite;
         }
 
@@ -630,8 +814,8 @@ export default function AttendanceLogs() {
           height: 60px;
           border-radius: 50%;
           border: 1px solid transparent;
-          border-top-color: rgba(32,216,220,.66);
-          border-bottom-color: rgba(32,216,220,.2);
+          border-top-color: rgba(10,162,180,.6);
+          border-bottom-color: rgba(10,162,180,.2);
           animation: spin 3.3s linear infinite;
         }
 
@@ -643,19 +827,19 @@ export default function AttendanceLogs() {
         }
 
         .sync-time span {
-          color: rgba(181,197,215,.48);
+          color: rgba(85,105,125,.75);
           font-size: 11px;
           text-transform: uppercase;
           letter-spacing: .08em;
         }
 
         .sync-time strong {
-          color: #e1a052;
+          color: var(--hx-gold, #a9791f);
           font-size: 18px;
           font-weight: 750;
           letter-spacing: .055em;
           font-variant-numeric: tabular-nums;
-          text-shadow: 0 0 15px rgba(225,160,82,.25);
+          text-shadow: 0 0 15px rgba(210,170,85,.3);
         }
 
         .refresh-control {
@@ -675,13 +859,13 @@ export default function AttendanceLogs() {
           align-items: center;
           justify-content: center;
           gap: 13px;
-          border: 1px solid rgba(229,160,82,.65);
+          border: 1px solid rgba(210,170,85,.6);
           border-radius: 21px;
-          color: #f5f8fc;
-          background: linear-gradient(145deg, rgba(24,45,56,.7), rgba(4,18,31,.88));
+          color: var(--hx-navy, #0c3455);
+          background: linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.08),
-            0 16px 35px rgba(0,0,0,.28);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 16px 35px rgba(20,55,95,.12);
           font-size: 18px;
           font-weight: 650;
           cursor: pointer;
@@ -690,8 +874,12 @@ export default function AttendanceLogs() {
 
         .refresh-button:hover {
           transform: translateY(-3px);
-          border-color: rgba(241,183,107,.92);
-          box-shadow: 0 21px 42px rgba(0,0,0,.34), 0 0 26px rgba(217,145,69,.13);
+          border-color: rgba(169,121,31,.8);
+          box-shadow: 0 21px 42px rgba(20,55,95,.18), 0 0 26px rgba(210,170,85,.2);
+        }
+
+        .refresh-button:active:not(:disabled) {
+          transform: translateY(-1px) scale(.97);
         }
 
         .refresh-button svg {
@@ -718,8 +906,8 @@ export default function AttendanceLogs() {
           width: 112px;
           height: 112px;
           right: 0;
-          border-top-color: rgba(217,145,69,.5);
-          border-right-color: rgba(217,145,69,.12);
+          border-top-color: rgba(178,134,45,.45);
+          border-right-color: rgba(178,134,45,.14);
           animation: spin 8s linear infinite;
         }
 
@@ -727,8 +915,8 @@ export default function AttendanceLogs() {
           width: 142px;
           height: 142px;
           right: -15px;
-          border-left-color: rgba(32,216,220,.24);
-          border-bottom-color: rgba(217,145,69,.3);
+          border-left-color: rgba(10,162,180,.3);
+          border-bottom-color: rgba(210,170,85,.35);
           animation: spin 13s linear infinite reverse;
         }
 
@@ -737,8 +925,8 @@ export default function AttendanceLogs() {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: #e6a152;
-          box-shadow: 0 0 15px rgba(230,161,82,.92);
+          background: #d2aa55;
+          box-shadow: 0 0 15px rgba(210,170,85,.7);
           animation: sparkPulse 2s ease-in-out infinite;
         }
 
@@ -762,8 +950,8 @@ export default function AttendanceLogs() {
         }
 
         .metric-card {
-          --metric-color: #20d8dc;
-          --metric-rgb: 32,216,220;
+          --metric-color: #0b93a6;
+          --metric-rgb: 11,147,166;
           min-width: 0;
           min-height: 205px;
           padding: 32px 30px 38px;
@@ -774,38 +962,39 @@ export default function AttendanceLogs() {
           column-gap: 24px;
           align-items: center;
           overflow: hidden;
-          border: 1px solid rgba(var(--metric-rgb),.54);
+          border: 1px solid rgba(var(--metric-rgb),.3);
           border-radius: 22px;
-          background: linear-gradient(145deg, rgba(15,36,50,.8), rgba(4,18,31,.9));
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 18px 42px rgba(0,0,0,.25);
-          animation: cardEnter .75s var(--card-delay) ease both;
+          background: linear-gradient(145deg, #ffffff, #f3f8fd);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 18px 42px rgba(20,55,95,.1);
+          /* backwards fill: releases transform to the hover style after entry */
+          animation: cardEnter .75s var(--card-delay) ease backwards;
           transition: .38s ease;
         }
 
         .metric-card:hover {
           transform: translateY(-7px);
-          border-color: rgba(var(--metric-rgb),.82);
-          box-shadow: 0 28px 52px rgba(0,0,0,.34), 0 0 30px rgba(var(--metric-rgb),.09);
+          border-color: rgba(var(--metric-rgb),.6);
+          box-shadow: 0 28px 52px rgba(20,55,95,.16), 0 0 30px rgba(var(--metric-rgb),.12);
         }
 
         .metric-card-cyan {
-          --metric-color: #20d8dc;
-          --metric-rgb: 32,216,220;
+          --metric-color: #0b93a6;
+          --metric-rgb: 11,147,166;
         }
 
         .metric-card-green {
-          --metric-color: #16d8a0;
-          --metric-rgb: 22,216,160;
+          --metric-color: #0f9d76;
+          --metric-rgb: 15,157,118;
         }
 
         .metric-card-coral {
-          --metric-color: #ff7059;
-          --metric-rgb: 255,112,89;
+          --metric-color: #d64545;
+          --metric-rgb: 214,69,69;
         }
 
         .metric-card-gold {
-          --metric-color: #e3a04f;
-          --metric-rgb: 227,160,79;
+          --metric-color: #b0832e;
+          --metric-rgb: 176,131,46;
         }
 
         .metric-card-glow {
@@ -823,13 +1012,52 @@ export default function AttendanceLogs() {
           position: absolute;
           inset: 0;
           opacity: 0;
-          background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.08), transparent 70%);
+          background: linear-gradient(120deg, transparent 20%, rgba(var(--metric-rgb),.08), transparent 70%);
           transform: translateX(-120%);
+          animation: metricShineIn 1s ease calc(var(--card-delay) + 460ms) both;
+        }
+
+        /* One glass light sweep as each card lands, then it rests */
+        @keyframes metricShineIn {
+          0% { opacity: 1; transform: translateX(-120%); }
+          85% { opacity: 1; }
+          100% { opacity: 0; transform: translateX(120%); }
         }
 
         .metric-card:hover .metric-card-shine {
           opacity: 1;
           animation: shine .9s ease;
+        }
+
+        /* Border glow that blooms with the entrance and settles calm */
+        .metric-card::after {
+          content: "";
+          position: absolute;
+          inset: -1px;
+          border-radius: 22px;
+          pointer-events: none;
+          border: 1px solid rgba(var(--metric-rgb), .9);
+          box-shadow:
+            0 0 26px rgba(var(--metric-rgb), .22),
+            inset 0 0 18px rgba(var(--metric-rgb), .12);
+          opacity: 0;
+          animation: metricGlowSettle 1.7s ease calc(var(--card-delay) + 380ms) both;
+        }
+
+        @keyframes metricGlowSettle {
+          0% { opacity: 0; }
+          38% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+
+        /* Value highlight pulse right after the count-up lands */
+        .metric-number {
+          animation: metricNumberPulse 1s ease calc(var(--card-delay) + 820ms) both;
+        }
+
+        @keyframes metricNumberPulse {
+          0%, 100% { text-shadow: 0 0 0 rgba(var(--metric-rgb), 0); }
+          45% { text-shadow: 0 0 26px rgba(var(--metric-rgb), .55); }
         }
 
         .metric-icon {
@@ -870,7 +1098,7 @@ export default function AttendanceLogs() {
         .metric-title {
           width: 100%;
           overflow: hidden;
-          color: rgba(241,246,252,.82);
+          color: var(--hx-muted-strong, #3c516a);
           font-size: 14px;
           font-weight: 700;
           letter-spacing: .025em;
@@ -881,7 +1109,7 @@ export default function AttendanceLogs() {
 
         .metric-number {
           min-width: 86px;
-          color: #fff;
+          color: var(--hx-text, #0d2338);
           font-size: 52px;
           line-height: .9;
           font-weight: 650;
@@ -890,7 +1118,7 @@ export default function AttendanceLogs() {
         }
 
         .metric-card-gold .metric-number {
-          color: #e3a04f;
+          color: var(--hx-gold, #a9791f);
         }
 
         .metric-badge {
@@ -900,8 +1128,8 @@ export default function AttendanceLogs() {
           z-index: 3;
           padding: 7px 11px;
           border-radius: 9px;
-          color: #1ee19b;
-          background: rgba(17,132,94,.2);
+          color: #067a53;
+          background: rgba(15,157,118,.14);
           font-size: 12px;
           font-weight: 750;
         }
@@ -917,13 +1145,13 @@ export default function AttendanceLogs() {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: #e3a04f;
-          box-shadow: 0 0 14px rgba(227,160,79,.75);
+          background: #b0832e;
+          box-shadow: 0 0 14px rgba(210,170,85,.6);
           animation: livePulse 1.5s ease-in-out infinite;
         }
 
         .live-icon strong {
-          color: #e3a04f;
+          color: var(--hx-gold, #a9791f);
           font-size: 13px;
           letter-spacing: .08em;
         }
@@ -937,16 +1165,16 @@ export default function AttendanceLogs() {
           bottom: 37px;
           border-radius: 50%;
           background:
-            conic-gradient(#e3a04f 0 var(--countdown-angle), rgba(255,255,255,.09) var(--countdown-angle) 360deg);
+            conic-gradient(#b0832e 0 var(--countdown-angle), rgba(13,35,56,.1) var(--countdown-angle) 360deg);
           mask: radial-gradient(circle, transparent 51%, #000 53%);
-          filter: drop-shadow(0 0 7px rgba(227,160,79,.3));
+          filter: drop-shadow(0 0 7px rgba(176,131,46,.25));
         }
 
         .countdown-ring span {
           position: absolute;
           inset: 8px;
           border-radius: 50%;
-          border: 1px dashed rgba(227,160,79,.3);
+          border: 1px dashed rgba(176,131,46,.35);
           animation: spin 8s linear infinite reverse;
         }
 
@@ -971,12 +1199,43 @@ export default function AttendanceLogs() {
         }
 
         .records-panel {
+          position: relative;
           overflow: hidden;
-          border: 1px solid rgba(55,183,205,.45);
+          border: 1px solid rgba(11,147,166,.22);
           border-radius: 22px;
-          background: linear-gradient(160deg, rgba(7,25,41,.88), rgba(3,15,28,.94));
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 24px 54px rgba(0,0,0,.28);
+          background: linear-gradient(160deg, #ffffff, #f3f8fd);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 24px 54px rgba(20,55,95,.1);
           animation: panelEnter .8s .28s ease both;
+        }
+
+        /* Animated brand accent line across the panel top */
+        .records-panel::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          height: 2px;
+          z-index: 3;
+          transform-origin: left center;
+          transform: scaleX(0);
+          background:
+            linear-gradient(90deg, transparent, rgba(10,162,180,.75), rgba(210,170,85,.65), transparent);
+          animation: recordsLineIn 1.1s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .7s both;
+        }
+
+        @keyframes recordsLineIn {
+          from { transform: scaleX(0); opacity: 0; }
+          to { transform: scaleX(1); opacity: 1; }
+        }
+
+        .records-header > div,
+        .records-count {
+          animation: heroEnter .6s ease .55s both;
+        }
+
+        .records-count {
+          animation-delay: .68s;
         }
 
         .records-header {
@@ -985,8 +1244,8 @@ export default function AttendanceLogs() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-bottom: 1px solid rgba(77,143,164,.19);
-          background: rgba(8,28,45,.55);
+          border-bottom: 1px solid var(--hx-line, rgba(14,55,92,.12));
+          background: rgba(11,147,166,.05);
         }
 
         .records-header > div {
@@ -1000,7 +1259,7 @@ export default function AttendanceLogs() {
           height: 32px;
           display: grid;
           place-items: center;
-          color: #e2a04e;
+          color: var(--hx-gold, #a9791f);
         }
 
         .records-title-icon svg {
@@ -1019,10 +1278,10 @@ export default function AttendanceLogs() {
 
         .records-count {
           padding: 10px 17px;
-          border: 1px solid rgba(101,142,166,.18);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 14px;
-          color: rgba(199,212,228,.58);
-          background: rgba(7,22,36,.58);
+          color: var(--hx-muted, #55697d);
+          background: var(--hx-panel-strong, #ffffff);
           font-size: 13px;
           font-variant-numeric: tabular-nums;
         }
@@ -1042,29 +1301,29 @@ export default function AttendanceLogs() {
           height: 58px;
           padding: 0 28px;
           text-align: left;
-          color: rgba(179,193,210,.58);
+          color: var(--hx-navy, #0c3455);
           font-size: 12px;
           font-weight: 700;
           letter-spacing: .055em;
           text-transform: uppercase;
-          border-bottom: 1px solid rgba(217,145,69,.21);
+          border-bottom: 1px solid rgba(169,121,31,.25);
         }
 
         .record-row {
-          border-bottom: 1px solid rgba(91,129,151,.1);
+          border-bottom: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           animation: rowEnter .5s var(--row-delay) ease both;
           transition: .25s ease;
         }
 
         .record-row:hover {
-          background: rgba(32,216,220,.035);
-          box-shadow: inset 3px 0 0 rgba(32,216,220,.5);
+          background: rgba(11,147,166,.05);
+          box-shadow: inset 3px 0 0 rgba(10,162,180,.55);
         }
 
         .attendance-table td {
           height: 70px;
           padding: 0 28px;
-          color: rgba(224,232,242,.76);
+          color: #33475a;
           font-size: 13px;
         }
 
@@ -1079,14 +1338,14 @@ export default function AttendanceLogs() {
           height: 40px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(32,216,220,.28);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 13px;
-          color: #20d8dc;
-          background: rgba(32,216,220,.08);
+          color: var(--hx-cyan, #0b93a6);
+          background: rgba(11,147,166,.08);
         }
 
         .email-cell {
-          color: rgba(187,202,218,.55) !important;
+          color: rgba(85,105,125,.85) !important;
         }
 
         .action-badge {
@@ -1109,22 +1368,22 @@ export default function AttendanceLogs() {
         }
 
         .action-badge.check-in {
-          color: #17d7a1;
-          border: 1px solid rgba(23,215,161,.23);
-          background: rgba(23,215,161,.075);
+          color: #067a53;
+          border: 1px solid rgba(15,157,118,.3);
+          background: rgba(15,157,118,.1);
         }
 
         .action-badge.check-out {
-          color: #ff755f;
-          border: 1px solid rgba(255,117,95,.23);
-          background: rgba(255,117,95,.075);
+          color: #b4372a;
+          border: 1px solid rgba(214,69,69,.28);
+          background: rgba(214,69,69,.08);
         }
 
         .timestamp-cell {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          color: rgba(187,202,218,.6);
+          color: var(--hx-muted, #55697d);
           font-variant-numeric: tabular-nums;
         }
 
@@ -1152,7 +1411,7 @@ export default function AttendanceLogs() {
           overflow: hidden;
           text-align: center;
           background:
-            radial-gradient(circle at center 45%, rgba(8,67,82,.16), transparent 30%);
+            radial-gradient(circle at center 45%, rgba(10,162,180,.08), transparent 30%);
         }
 
         .empty-particles {
@@ -1167,8 +1426,8 @@ export default function AttendanceLogs() {
           width: 3px;
           height: 3px;
           border-radius: 50%;
-          background: #e4a454;
-          box-shadow: 0 0 10px rgba(228,164,84,.8);
+          background: #d2aa55;
+          box-shadow: 0 0 10px rgba(210,170,85,.6);
           animation: particleFloat 5s var(--particle-delay) ease-in-out infinite;
         }
 
@@ -1179,11 +1438,11 @@ export default function AttendanceLogs() {
           display: grid;
           place-items: center;
           margin-bottom: 22px;
-          border: 1px solid rgba(32,216,220,.5);
+          border: 1px solid rgba(11,147,166,.4);
           border-radius: 50px 50px 14px 14px;
-          color: rgba(239,245,252,.8);
-          background: rgba(5,20,33,.7);
-          box-shadow: 0 0 24px rgba(32,216,220,.09);
+          color: #33475a;
+          background: var(--hx-panel-strong, #ffffff);
+          box-shadow: 0 0 24px rgba(23,217,212,.14), 0 14px 30px rgba(20,55,95,.1);
           animation: emptyFloat 4s ease-in-out infinite;
         }
 
@@ -1200,20 +1459,20 @@ export default function AttendanceLogs() {
           width: 13px;
           height: 7px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 22px 7px rgba(229,160,82,.34);
+          background: #d2aa55;
+          box-shadow: 0 0 22px 7px rgba(210,170,85,.3);
           animation: sparkPulse 1.8s ease-in-out infinite;
         }
 
         .empty-state h3 {
           margin: 0 0 12px;
-          color: rgba(229,236,245,.72);
+          color: #33475a;
           font-size: 18px;
         }
 
         .empty-state p {
           margin: 0;
-          color: rgba(151,169,190,.44);
+          color: #7a8ea0;
           font-size: 13px;
         }
 

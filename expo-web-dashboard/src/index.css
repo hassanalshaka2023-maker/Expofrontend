@@ -78,3 +78,75 @@ canvas {
     rgba(217, 145, 69, 0.62)
   );
 }
+
+/* ==========================================================================
+   HOPEX premium motion + light-theme color tokens.
+   Mirrors the bright HOPEX system of the redesigned Landing Page
+   (hopex-landing-page/src/styles.css) and the logo colors (teal + gold,
+   deep navy). New variables only — consumed exclusively by the non-map,
+   non-landing interfaces (Login, Attendance Hub, Staff Management,
+   Visitor QR). Map scenes and the admin 3D shell never reference them.
+   ========================================================================== */
+:root {
+  /* Backgrounds & surfaces (landing: --bg / --bg-soft / --panel) */
+  --hx-bg: #eef4fb;
+  --hx-bg-soft: #ffffff;
+  --hx-surface-tint: #f3f8fd;
+  --hx-panel: rgba(255, 255, 255, 0.74);
+  --hx-panel-strong: #ffffff;
+
+  /* Text (landing: --text / --muted / --muted-light / --navy) */
+  --hx-text: #0d2338;
+  --hx-muted: #55697d;
+  --hx-muted-strong: #3c516a;
+  --hx-navy: #0c3455;
+
+  /* Brand accents from the HOPEX logo, exactly as the landing uses them */
+  --hx-cyan: #0b93a6;
+  --hx-cyan-strong: #0aa2b4;
+  --hx-cyan-deep: #076e7e;
+  --hx-cyan-bright: #17d9d4;
+  --hx-gold: #a9791f;
+  --hx-gold-soft: #d2aa55;
+  --hx-gold-bright: #e6be6a;
+  --hx-violet: #7c5cff;
+  --hx-violet-soft: #a78bfa;
+  --hx-magenta: #ff5fa2;
+
+  /* Borders, shadows, states (landing: --line / --shadow) */
+  --hx-line: rgba(14, 55, 92, 0.12);
+  --hx-line-soft: rgba(14, 55, 92, 0.07);
+  --hx-shadow: 0 30px 80px rgba(20, 55, 95, 0.12);
+  --hx-shadow-soft: 0 18px 48px rgba(20, 55, 95, 0.1);
+  --hx-focus: rgba(11, 147, 166, 0.22);
+  --hx-hover-tint: rgba(11, 147, 166, 0.06);
+
+  /* Primary action gradient (landing .button-primary) */
+  --hx-grad-primary: linear-gradient(135deg, #27e8df, #00a8bd 58%, #d3aa56 135%);
+
+  /* Image integration overlays */
+  --hx-image-overlay: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 48%,
+    rgba(238, 244, 251, 0.55) 84%,
+    rgba(238, 244, 251, 0.85) 100%
+  );
+  --hx-image-tint: linear-gradient(
+    160deg,
+    rgba(23, 217, 212, 0.12),
+    rgba(124, 92, 255, 0.07) 45%,
+    rgba(255, 255, 255, 0) 62%
+  );
+
+  /* Motion durations */
+  --hx-dur-fast: 0.16s;
+  --hx-dur-std: 0.32s;
+  --hx-dur-panel: 0.64s;
+  --hx-dur-page: 0.78s;
+  --hx-dur-image: 1.15s;
+  --hx-stagger: 70ms;
+
+  /* Premium easing */
+  --hx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --hx-ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}

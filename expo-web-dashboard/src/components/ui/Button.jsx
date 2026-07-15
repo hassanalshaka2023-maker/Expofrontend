@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 
 const variants = {
-  primary: 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/20',
-  success: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20',
-  danger: 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-lg shadow-rose-600/20',
-  ghost: 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10',
+  primary: 'bg-gradient-to-br from-[#27e8df] via-[#00a8bd] to-[#d3aa56] text-[#001116] shadow-lg shadow-[#00c4ca]/25',
+  success: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25',
+  danger: 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-lg shadow-rose-500/25',
+  ghost: 'bg-white text-[#0c3455] border border-[#0b93a6]/30 hover:bg-[#0b93a6]/[0.06]',
 };
 
 export default function Button({ children, variant = 'primary', onClick, className = '', disabled = false, size = 'md' }) {

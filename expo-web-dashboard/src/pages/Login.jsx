@@ -95,6 +95,23 @@ export default function Login({ onLoginSuccess }) {
                 <QrCode size={16} /> Real-time visitor and investor insights
               </li>
             </ul>
+
+            {/* Decorative cinematic exhibition panel (visual only) */}
+            <div className="login-visual" aria-hidden="true">
+              <div className="login-visual-frame">
+                <img
+                  src="/assets/exhibition-login.jpg"
+                  alt=""
+                  className="login-visual-img"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <span className="login-visual-sweep" />
+                <span className="login-visual-halo" />
+                <span className="login-visual-corner is-tl" />
+                <span className="login-visual-corner is-br" />
+              </div>
+            </div>
           </div>
         </aside>
 

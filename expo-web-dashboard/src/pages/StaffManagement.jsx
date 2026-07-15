@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeCanvas } from "qrcode.react";
 import {
@@ -23,14 +23,50 @@ const spring = {
   damping: 27,
 };
 
-function StaffRow({ staff, onShowQR }) {
+/* Count-up display for values that already exist — the real final value is
+   always reached, and shown immediately under reduced-motion settings. */
+function AnimatedNumber({ value }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const previousValue = useRef(0);
+
+  useEffect(() => {
+    const from = previousValue.current;
+    const to = Number(value) || 0;
+    const startedAt = performance.now();
+    // Reduced motion: the real final value lands on the very first frame.
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches
+      ? 1
+      : 620;
+    let frameId;
+
+    const animate = (currentTime) => {
+      const progress = Math.min((currentTime - startedAt) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+      setDisplayValue(Math.round(from + (to - from) * easedProgress));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      } else {
+        previousValue.current = to;
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [value]);
+
+  return <>{displayValue.toLocaleString("en-US")}</>;
+}
+
+function StaffRow({ staff, onShowQR, index = 0 }) {
   return (
     <motion.tr
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10, scale: 0.97 }}
-      transition={spring}
+      transition={{ ...spring, delay: Math.min(index * 0.045, 0.45) }}
       className="staff-row"
     >
       <td>
@@ -119,8 +155,8 @@ function QRModal({ staff, onClose, onRefreshQR, refreshing }) {
                     <QRCodeCanvas
                       value={qrValue}
                       size={220}
-                      bgColor="#03101e"
-                      fgColor="#20d8dc"
+                      bgColor="#ffffff"
+                      fgColor="#0c3455"
                       level="H"
                       includeMargin={false}
                     />
@@ -475,21 +511,29 @@ export default function StaffManagement() {
             <Users className="h-5 w-5" />
             <div>
               <span>Total Staff</span>
-              <strong>{staff.length}</strong>
+              <strong>
+                <AnimatedNumber value={staff.length} />
+              </strong>
             </div>
           </div>
           <div className="summary-card summary-card-inside">
             <CheckCircle className="h-5 w-5" />
             <div>
               <span>Inside</span>
-              <strong>{staff.filter((s) => s.isInside).length}</strong>
+              <strong>
+                <AnimatedNumber value={staff.filter((s) => s.isInside).length} />
+              </strong>
             </div>
           </div>
           <div className="summary-card summary-card-outside">
             <X className="h-5 w-5" />
             <div>
               <span>Outside</span>
-              <strong>{staff.filter((s) => !s.isInside).length}</strong>
+              <strong>
+                <AnimatedNumber
+                  value={staff.filter((s) => !s.isInside).length}
+                />
+              </strong>
             </div>
           </div>
         </div>
@@ -520,11 +564,12 @@ export default function StaffManagement() {
                 </tr>
               ) : (
                 <AnimatePresence>
-                  {staff.map((member) => (
+                  {staff.map((member, index) => (
                     <StaffRow
                       key={member._id}
                       staff={member}
                       onShowQR={setSelectedStaff}
+                      index={index}
                     />
                   ))}
                 </AnimatePresence>
@@ -558,9 +603,9 @@ export default function StaffManagement() {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
-          color: #f6f9fd;
+          color: var(--hx-text, #0d2338);
           font-family: 'Inter', sans-serif;
-          background: #020914;
+          background: var(--hx-bg, #eef4fb);
           isolation: isolate;
         }
 
@@ -575,10 +620,10 @@ export default function StaffManagement() {
         .staff-grid-bg {
           position: absolute;
           inset: 0;
-          opacity: 0.18;
+          opacity: 0.5;
           background-image:
-            linear-gradient(rgba(32,216,220,.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(32,216,220,.04) 1px, transparent 1px);
+            linear-gradient(rgba(11,147,166,.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(11,147,166,.05) 1px, transparent 1px);
           background-size: 78px 78px;
           animation: staffGridMove 32s linear infinite;
         }
@@ -599,8 +644,8 @@ export default function StaffManagement() {
           height: 460px;
           right: -160px;
           top: 80px;
-          opacity: .1;
-          background: #09b8c6;
+          opacity: .16;
+          background: #17d9d4;
           animation: staffCyanOrb 15s ease-in-out infinite alternate;
         }
 
@@ -609,8 +654,8 @@ export default function StaffManagement() {
           height: 380px;
           left: -140px;
           bottom: -100px;
-          opacity: .08;
-          background: #c87835;
+          opacity: .14;
+          background: #e6be6a;
           animation: staffGoldOrb 13s ease-in-out infinite alternate;
         }
 
@@ -634,8 +679,8 @@ export default function StaffManagement() {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 11px rgba(229,160,82,.75);
+          background: #d2aa55;
+          box-shadow: 0 0 11px rgba(210,170,85,.6);
         }
 
         .staff-content {
@@ -673,18 +718,51 @@ export default function StaffManagement() {
           letter-spacing: .015em;
         }
 
-        .staff-hero-copy h1 span { color: #f4f6fa; }
+        .staff-hero-copy h1 span {
+          color: var(--hx-text, #0d2338);
+          animation: staffWordIn .75s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .1s both;
+        }
+
         .staff-hero-copy h1 em {
-          color: #20d8dc;
           font-style: normal;
           font-weight: 600;
-          text-shadow: 0 0 28px rgba(32,216,220,.16);
+          color: #0b93a6;
+          background: linear-gradient(105deg, #0b93a6 30%, #17d9d4 50%, #0b93a6 70%);
+          background-size: 240% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 0 28px rgba(23,217,212,.22);
+          animation:
+            staffWordIn .75s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .24s both,
+            staffEmSheen 1.6s ease-in-out 1s both;
+        }
+
+        @keyframes staffWordIn {
+          from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes staffEmSheen {
+          from { background-position: 130% 0; }
+          to { background-position: 0% 0; }
         }
 
         .staff-hero-copy p {
           margin: 16px 0 0;
-          color: rgba(181,197,215,.62);
+          color: var(--hx-muted, #55697d);
           font-size: 15px;
+          animation: heroEnter .65s ease .34s both;
+        }
+
+        .staff-hero-deco {
+          transform-origin: left center;
+          animation: staffDecoIn .6s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .04s both;
+        }
+
+        @keyframes staffDecoIn {
+          from { opacity: 0; transform: scaleX(.35); }
+          to { opacity: 1; transform: scaleX(1); }
         }
 
         .staff-hero-deco {
@@ -698,14 +776,14 @@ export default function StaffManagement() {
           width: 8px;
           height: 8px;
           transform: rotate(45deg);
-          background: #e5a052;
-          box-shadow: 0 0 12px rgba(229,160,82,.55);
+          background: #d2aa55;
+          box-shadow: 0 0 12px rgba(210,170,85,.5);
         }
 
         .staff-hero-line {
           width: 64px;
           height: 1px;
-          background: linear-gradient(90deg, #d99145, transparent);
+          background: linear-gradient(90deg, #d2aa55, transparent);
         }
 
         .staff-hero-right {
@@ -720,29 +798,49 @@ export default function StaffManagement() {
           align-items: center;
           gap: 10px;
           padding: 14px 26px;
-          border: 1px solid rgba(32,216,220,.5);
+          border: 1px solid rgba(10,162,180,.45);
           border-radius: 16px;
-          background: linear-gradient(145deg, rgba(8,38,53,.88), rgba(3,17,30,.92));
-          color: #20d8dc;
+          background: linear-gradient(135deg, #27e8df, #00a8bd 58%, #d3aa56 135%);
+          color: #001116;
           font-size: 14px;
           font-weight: 700;
           cursor: pointer;
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+          box-shadow: 0 12px 35px rgba(0,196,202,.2), inset 0 1px 0 rgba(255,255,255,.42);
           transition: .3s ease;
           overflow: hidden;
         }
 
         .add-staff-btn:hover {
-          border-color: rgba(32,216,220,.85);
-          box-shadow: 0 0 28px rgba(32,216,220,.12);
+          border-color: rgba(10,162,180,.7);
+          box-shadow: 0 18px 45px rgba(0,205,208,.28), inset 0 1px 0 rgba(255,255,255,.45);
           transform: translateY(-2px);
+        }
+
+        .add-staff-btn:active {
+          transform: translateY(0) scale(.97);
+        }
+
+        /* Border light sweep on hover */
+        .add-staff-btn::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%);
+          transform: translateX(-130%);
+          transition: transform .7s var(--hx-ease, cubic-bezier(.16,1,.3,1));
+          pointer-events: none;
+        }
+
+        .add-staff-btn:hover::after {
+          transform: translateX(130%);
         }
 
         .add-staff-ring {
           position: absolute;
           inset: -6px;
           border-radius: 20px;
-          border: 1px solid rgba(32,216,220,.2);
+          border: 1px solid rgba(10,162,180,.28);
           animation: ringPulse 2s ease-in-out infinite;
         }
 
@@ -756,17 +854,17 @@ export default function StaffManagement() {
           height: 44px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,255,255,.1);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 12px;
-          background: rgba(255,255,255,.035);
-          color: rgba(203,216,231,.6);
+          background: var(--hx-panel-strong, #ffffff);
+          color: var(--hx-muted, #55697d);
           cursor: pointer;
           transition: .25s ease;
         }
 
         .staff-refresh-btn:hover {
-          border-color: rgba(32,216,220,.3);
-          color: #20d8dc;
+          border-color: rgba(11,147,166,.4);
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .staff-summary {
@@ -778,25 +876,68 @@ export default function StaffManagement() {
 
         .summary-card {
           flex: 1;
+          position: relative;
           display: flex;
           align-items: center;
           gap: 14px;
           padding: 18px 22px;
-          border: 1px solid rgba(32,216,220,.35);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 16px;
-          background: linear-gradient(145deg, rgba(8,38,53,.8), rgba(3,17,30,.9));
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-          color: #20d8dc;
+          background: linear-gradient(145deg, #ffffff, #f3f8fd);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 12px 28px rgba(20,55,95,.08);
+          color: var(--hx-cyan, #0b93a6);
+          /* backwards fill: releases transform to the hover style after entry */
+          animation: summaryCardIn .65s var(--hx-ease, cubic-bezier(.16,1,.3,1)) backwards;
+          transition: transform .28s var(--hx-ease, cubic-bezier(.16,1,.3,1)), box-shadow .28s ease;
+        }
+
+        .summary-card:nth-child(1) { animation-delay: .16s; }
+        .summary-card:nth-child(2) { animation-delay: .24s; }
+        .summary-card:nth-child(3) { animation-delay: .32s; }
+
+        @keyframes summaryCardIn {
+          from { opacity: 0; transform: translateY(16px) scale(.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .summary-card:hover {
+          transform: translateY(-3px);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 14px 30px rgba(20,55,95,.14),
+            0 0 22px rgba(23,217,212,.12);
+        }
+
+        /* Brief glow bloom as each summary card lands, then calm */
+        .summary-card::after {
+          content: "";
+          position: absolute;
+          inset: -1px;
+          border-radius: 16px;
+          pointer-events: none;
+          border: 1px solid currentColor;
+          opacity: 0;
+          animation: summaryGlowSettle 1.5s ease both;
+        }
+
+        .summary-card:nth-child(1)::after { animation-delay: .5s; }
+        .summary-card:nth-child(2)::after { animation-delay: .6s; }
+        .summary-card:nth-child(3)::after { animation-delay: .7s; }
+
+        @keyframes summaryGlowSettle {
+          0% { opacity: 0; }
+          40% { opacity: .55; }
+          100% { opacity: 0; }
         }
 
         .summary-card-inside {
-          border-color: rgba(22,216,160,.35);
-          color: #16d8a0;
+          border-color: rgba(15,157,118,.35);
+          color: #0f9d76;
         }
 
         .summary-card-outside {
-          border-color: rgba(255,112,89,.35);
-          color: #ff7059;
+          border-color: rgba(214,69,69,.3);
+          color: #d64545;
         }
 
         .summary-card div {
@@ -819,10 +960,10 @@ export default function StaffManagement() {
 
         .staff-table-wrapper {
           overflow: hidden;
-          border: 1px solid rgba(32,216,220,.25);
+          border: 1px solid rgba(11,147,166,.22);
           border-radius: 20px;
-          background: linear-gradient(160deg, rgba(7,25,41,.85), rgba(3,15,28,.92));
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 18px 42px rgba(0,0,0,.25);
+          background: linear-gradient(160deg, #ffffff, #f3f8fd);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 18px 42px rgba(20,55,95,.1);
           animation: heroEnter .7s .22s ease both;
         }
 
@@ -839,17 +980,17 @@ export default function StaffManagement() {
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: .08em;
-          color: rgba(203,216,231,.5);
-          border-bottom: 1px solid rgba(77,143,164,.19);
-          background: rgba(8,28,45,.55);
+          color: var(--hx-navy, #0c3455);
+          border-bottom: 1px solid var(--hx-line, rgba(14,55,92,.12));
+          background: rgba(11,147,166,.05);
         }
 
         .staff-row {
-          border-bottom: 1px solid rgba(255,255,255,.04);
+          border-bottom: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           transition: background .2s;
         }
 
-        .staff-row:hover { background: rgba(32,216,220,.03); }
+        .staff-row:hover { background: rgba(11,147,166,.05); }
 
         .staff-row td { padding: 14px 20px; }
 
@@ -865,20 +1006,20 @@ export default function StaffManagement() {
           display: grid;
           place-items: center;
           border-radius: 10px;
-          background: linear-gradient(145deg, rgba(32,216,220,.2), rgba(3,27,42,.8));
-          border: 1px solid rgba(32,216,220,.3);
-          color: #20d8dc;
+          background: linear-gradient(145deg, rgba(11,147,166,.14), rgba(255,255,255,.9));
+          border: 1px solid rgba(11,147,166,.3);
+          color: var(--hx-cyan, #0b93a6);
           font-size: 14px;
           font-weight: 800;
         }
 
         .staff-name-cell strong {
-          color: #f4f6fa;
+          color: var(--hx-text, #0d2338);
           font-size: 14px;
         }
 
         .staff-email-cell {
-          color: rgba(203,216,231,.55);
+          color: rgba(85,105,125,.85);
           font-size: 13px;
         }
 
@@ -895,15 +1036,15 @@ export default function StaffManagement() {
         }
 
         .status-chip.inside {
-          color: #16d8a0;
-          background: rgba(22,216,160,.1);
-          border: 1px solid rgba(22,216,160,.25);
+          color: #067a53;
+          background: rgba(15,157,118,.12);
+          border: 1px solid rgba(15,157,118,.3);
         }
 
         .status-chip.outside {
-          color: rgba(203,216,231,.5);
-          background: rgba(255,255,255,.04);
-          border: 1px solid rgba(255,255,255,.08);
+          color: var(--hx-muted, #55697d);
+          background: rgba(13,35,56,.05);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
         }
 
         .status-chip .status-dot {
@@ -913,8 +1054,8 @@ export default function StaffManagement() {
         }
 
         .status-chip.inside .status-dot {
-          background: #16d8a0;
-          box-shadow: 0 0 8px rgba(22,216,160,.6);
+          background: #0f9d76;
+          box-shadow: 0 0 8px rgba(15,157,118,.5);
           animation: livePulse 1.5s ease-in-out infinite;
         }
 
@@ -924,7 +1065,7 @@ export default function StaffManagement() {
         }
 
         .status-chip.outside .status-dot {
-          background: rgba(203,216,231,.35);
+          background: rgba(85,105,125,.5);
         }
 
         .qr-action-btn {
@@ -932,10 +1073,10 @@ export default function StaffManagement() {
           align-items: center;
           gap: 6px;
           padding: 7px 14px;
-          border: 1px solid rgba(32,216,220,.3);
+          border: 1px solid rgba(11,147,166,.35);
           border-radius: 10px;
-          background: rgba(32,216,220,.07);
-          color: #20d8dc;
+          background: rgba(11,147,166,.08);
+          color: var(--hx-cyan, #0b93a6);
           font-size: 11px;
           font-weight: 700;
           cursor: pointer;
@@ -943,9 +1084,9 @@ export default function StaffManagement() {
         }
 
         .qr-action-btn:hover {
-          background: rgba(32,216,220,.14);
-          border-color: rgba(32,216,220,.55);
-          box-shadow: 0 0 18px rgba(32,216,220,.1);
+          background: rgba(11,147,166,.14);
+          border-color: rgba(11,147,166,.6);
+          box-shadow: 0 0 18px rgba(23,217,212,.16);
         }
 
         .staff-empty-cell {
@@ -958,12 +1099,12 @@ export default function StaffManagement() {
           flex-direction: column;
           align-items: center;
           gap: 14px;
-          color: rgba(203,216,231,.45);
+          color: #7a8ea0;
         }
 
         .staff-empty h3 {
           margin: 0;
-          color: rgba(241,246,252,.7);
+          color: #33475a;
           font-size: 18px;
         }
 
@@ -979,7 +1120,8 @@ export default function StaffManagement() {
           place-content: center;
           justify-items: center;
           gap: 20px;
-          color: rgba(203,216,231,.55);
+          color: var(--hx-muted, #55697d);
+          background: var(--hx-bg, #eef4fb);
         }
 
         .staff-loading-rings {
@@ -995,8 +1137,8 @@ export default function StaffManagement() {
           inset: 0;
           border-radius: 50%;
           border: 1px solid transparent;
-          border-top-color: #20d8dc;
-          border-right-color: rgba(217,145,69,.48);
+          border-top-color: #0aa2b4;
+          border-right-color: rgba(178,134,45,.5);
           animation: spin 2.2s linear infinite;
         }
 
@@ -1020,6 +1162,7 @@ export default function StaffManagement() {
           display: grid;
           place-items: center;
           padding: 32px;
+          background: var(--hx-bg, #eef4fb);
         }
 
         .staff-error-content {
@@ -1033,21 +1176,21 @@ export default function StaffManagement() {
           margin: 0 auto 20px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,112,89,.25);
+          border: 1px solid rgba(214,69,69,.3);
           border-radius: 20px;
-          color: #ff7059;
-          background: rgba(255,112,89,.08);
+          color: #d64545;
+          background: rgba(214,69,69,.08);
         }
 
         .staff-error-content h2 {
           margin: 0 0 10px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 20px;
         }
 
         .staff-error-content p {
           margin: 0 0 24px;
-          color: rgba(188,203,220,.6);
+          color: var(--hx-muted, #55697d);
           font-size: 14px;
         }
 
@@ -1056,7 +1199,7 @@ export default function StaffManagement() {
           position: fixed;
           inset: 0;
           z-index: 200;
-          background: rgba(0,0,0,.65);
+          background: rgba(13,35,56,.32);
           backdrop-filter: blur(6px);
         }
 
@@ -1075,11 +1218,42 @@ export default function StaffManagement() {
           max-width: 460px;
           max-height: 90vh;
           overflow-y: auto;
-          border: 1px solid rgba(32,216,220,.3);
+          border: 1px solid rgba(11,147,166,.28);
           border-radius: 22px;
-          background: linear-gradient(160deg, #061523, #03101e);
-          box-shadow: 0 32px 64px rgba(0,0,0,.45), 0 0 48px rgba(32,216,220,.06);
+          background: linear-gradient(160deg, #ffffff, #f3f8fd);
+          box-shadow: 0 32px 64px rgba(20,55,95,.22), 0 0 48px rgba(23,217,212,.08);
           pointer-events: auto;
+          animation: modalGlowSettle 1.6s ease .15s both;
+        }
+
+        /* Border glow that blooms with the modal entrance, then settles */
+        @keyframes modalGlowSettle {
+          0% { box-shadow: 0 32px 64px rgba(20,55,95,.22), 0 0 0 rgba(23,217,212,0); }
+          40% { box-shadow: 0 32px 64px rgba(20,55,95,.22), 0 0 56px rgba(23,217,212,.2); }
+          100% { box-shadow: 0 32px 64px rgba(20,55,95,.22), 0 0 48px rgba(23,217,212,.08); }
+        }
+
+        /* Short content stagger inside the modals */
+        .modal-header,
+        .staff-form > *,
+        .qr-modal-body > * {
+          animation: modalItemIn .5s var(--hx-ease, cubic-bezier(.16,1,.3,1)) both;
+        }
+
+        .modal-header { animation-delay: .05s; }
+        .staff-form > *:nth-child(1) { animation-delay: .12s; }
+        .staff-form > *:nth-child(2) { animation-delay: .18s; }
+        .staff-form > *:nth-child(3) { animation-delay: .24s; }
+        .staff-form > *:nth-child(4) { animation-delay: .3s; }
+        .staff-form > *:nth-child(5) { animation-delay: .36s; }
+        .qr-modal-body > *:nth-child(1) { animation-delay: .12s; }
+        .qr-modal-body > *:nth-child(2) { animation-delay: .2s; }
+        .qr-modal-body > *:nth-child(3) { animation-delay: .28s; }
+        .qr-modal-body > *:nth-child(4) { animation-delay: .34s; }
+
+        @keyframes modalItemIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-header {
@@ -1087,7 +1261,7 @@ export default function StaffManagement() {
           align-items: center;
           justify-content: space-between;
           padding: 20px 24px 16px;
-          border-bottom: 1px solid rgba(255,255,255,.06);
+          border-bottom: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
         }
 
         .modal-header h3 {
@@ -1096,7 +1270,7 @@ export default function StaffManagement() {
           align-items: center;
           gap: 10px;
           font-size: 16px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .modal-close-btn {
@@ -1104,17 +1278,17 @@ export default function StaffManagement() {
           height: 34px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,255,255,.08);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 10px;
-          background: rgba(255,255,255,.035);
-          color: rgba(203,216,231,.6);
+          background: rgba(13,35,56,.04);
+          color: var(--hx-muted, #55697d);
           cursor: pointer;
           transition: .2s;
         }
 
         .modal-close-btn:hover {
-          background: rgba(255,255,255,.07);
-          color: white;
+          background: rgba(13,35,56,.08);
+          color: var(--hx-text, #0d2338);
         }
 
         /* Add Staff Form */
@@ -1130,10 +1304,10 @@ export default function StaffManagement() {
           align-items: center;
           gap: 8px;
           padding: 10px 14px;
-          border: 1px solid rgba(255,112,89,.35);
+          border: 1px solid rgba(214,69,69,.32);
           border-radius: 10px;
-          background: rgba(255,112,89,.08);
-          color: #ff7059;
+          background: rgba(214,69,69,.08);
+          color: #b4372a;
           font-size: 13px;
           font-weight: 600;
         }
@@ -1148,7 +1322,7 @@ export default function StaffManagement() {
           display: flex;
           align-items: center;
           gap: 6px;
-          color: rgba(203,216,231,.6);
+          color: var(--hx-muted-strong, #3c516a);
           font-size: 11px;
           font-weight: 700;
           text-transform: uppercase;
@@ -1157,10 +1331,10 @@ export default function StaffManagement() {
 
         .staff-input {
           padding: 12px 16px;
-          border: 1px solid rgba(255,255,255,.1);
+          border: 1px solid rgba(14,55,92,.16);
           border-radius: 12px;
-          background: rgba(255,255,255,.035);
-          color: #f4f6fa;
+          background: var(--hx-panel-strong, #ffffff);
+          color: var(--hx-text, #0d2338);
           font-size: 14px;
           outline: none;
           transition: .2s;
@@ -1168,12 +1342,33 @@ export default function StaffManagement() {
         }
 
         .staff-input:focus {
-          border-color: rgba(32,216,220,.5);
-          box-shadow: 0 0 16px rgba(32,216,220,.06);
+          border-color: rgba(11,147,166,.55);
+          box-shadow: 0 0 0 3px var(--hx-focus, rgba(11,147,166,.22)), 0 0 16px rgba(23,217,212,.1);
         }
 
         .staff-input::placeholder {
-          color: rgba(203,216,231,.3);
+          color: rgba(13,35,56,.35);
+        }
+
+        /* Scoped light re-skin of the shared Button component inside this
+           page's modals only (the shared component itself is untouched so
+           the 3D booth manager keeps its own styling). */
+        .staff-form-actions > button[type="submit"] {
+          background: var(--hx-grad-primary, linear-gradient(135deg, #27e8df, #00a8bd 58%, #d3aa56 135%));
+          color: #001116;
+          box-shadow: 0 12px 35px rgba(0,196,202,.2), inset 0 1px 0 rgba(255,255,255,.42);
+        }
+
+        .staff-form-actions > button[type="button"],
+        .qr-modal-body .qr-refresh-btn {
+          background: var(--hx-panel-strong, #ffffff);
+          color: var(--hx-navy, #0c3455);
+          border: 1px solid rgba(11,147,166,.35);
+        }
+
+        .staff-form-actions > button[type="button"]:hover,
+        .qr-modal-body .qr-refresh-btn:hover {
+          background: rgba(11,147,166,.07);
         }
 
         .staff-form-actions {
@@ -1198,9 +1393,9 @@ export default function StaffManagement() {
           gap: 14px;
           width: 100%;
           padding: 12px 16px;
-          border: 1px solid rgba(255,255,255,.06);
+          border: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           border-radius: 14px;
-          background: rgba(255,255,255,.025);
+          background: rgba(13,35,56,.03);
         }
 
         .qr-staff-avatar {
@@ -1209,9 +1404,9 @@ export default function StaffManagement() {
           display: grid;
           place-items: center;
           border-radius: 12px;
-          background: linear-gradient(145deg, rgba(32,216,220,.25), rgba(3,27,42,.8));
-          border: 1px solid rgba(32,216,220,.35);
-          color: #20d8dc;
+          background: linear-gradient(145deg, rgba(11,147,166,.16), rgba(255,255,255,.9));
+          border: 1px solid rgba(11,147,166,.35);
+          color: var(--hx-cyan, #0b93a6);
           font-size: 16px;
           font-weight: 800;
         }
@@ -1223,24 +1418,25 @@ export default function StaffManagement() {
         }
 
         .qr-staff-info div strong {
-          color: #f4f6fa;
+          color: var(--hx-text, #0d2338);
           font-size: 15px;
         }
 
         .qr-staff-info div span {
-          color: rgba(203,216,231,.5);
+          color: var(--hx-muted, #55697d);
           font-size: 12px;
         }
 
         .qr-code-wrapper {
           position: relative;
           padding: 20px;
-          border: 1px solid rgba(32,216,220,.25);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 20px;
-          background: rgba(3,16,30,.8);
+          background: var(--hx-panel-strong, #ffffff);
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 16px 36px rgba(20,55,95,.12);
         }
 
         .qr-glow {
@@ -1248,9 +1444,16 @@ export default function StaffManagement() {
           inset: -8px;
           border-radius: 26px;
           opacity: 0.15;
-          background: radial-gradient(circle at center, #20d8dc, transparent 70%);
+          background: radial-gradient(circle at center, #17d9d4, transparent 70%);
           filter: blur(12px);
           pointer-events: none;
+          animation: qrGlowBloom 1.8s ease .35s both;
+        }
+
+        @keyframes qrGlowBloom {
+          0% { opacity: 0; }
+          40% { opacity: .4; }
+          100% { opacity: .15; }
         }
 
         .qr-empty-state {
@@ -1258,14 +1461,14 @@ export default function StaffManagement() {
           flex-direction: column;
           align-items: center;
           gap: 10px;
-          color: rgba(203,216,231,.4);
+          color: #7a8ea0;
           padding: 40px;
         }
 
         .qr-instruction {
           margin: 0;
           text-align: center;
-          color: rgba(203,216,231,.55);
+          color: var(--hx-muted, #55697d);
           font-size: 12px;
           line-height: 1.5;
           max-width: 280px;
@@ -1281,6 +1484,16 @@ export default function StaffManagement() {
           .staff-email-cell { display: none; }
           .staff-table thead th:nth-child(2) { display: none; }
           .modal-content { width: 96%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: .001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .001ms !important;
+          }
         }
       `}</style>
     </section>

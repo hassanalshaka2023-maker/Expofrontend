@@ -5,13 +5,21 @@ import {
   CheckCircle,
   Clock,
   MapPin,
+  Ruler,
   Shield,
   Sparkles,
+  Wallet,
   X,
 } from "lucide-react";
 import { webApi } from "../services/api";
 import SharedExhibitionScene from "../components/exhibition/SharedExhibitionScene";
 import BoothRatingSummary from "../components/BoothRatingSummary";
+import {
+  getInvestorBoothDetails,
+  formatBoothPrice,
+  formatBoothArea,
+  getBoothLocation,
+} from "../data/investorBoothDetails";
 
 const spring = {
   type: "spring",
@@ -42,6 +50,51 @@ function BackgroundParticles() {
           }}
         />
       ))}
+    </div>
+  );
+}
+
+/* Investor-only "Booth Business Details" group (price / area / location).
+ * Values come from the frontend presentation metadata in
+ * src/data/investorBoothDetails.js — nothing here is read from or written to
+ * the backend. The `key` on the root remounts the group whenever another
+ * booth is selected, so the short CSS entrance replays with fresh values
+ * (and the page's reduced-motion rule shows final values instantly). */
+function BoothBusinessDetails({ boothId }) {
+  const meta = getInvestorBoothDetails(boothId);
+
+  return (
+    <div className="booth-biz" key={boothId}>
+      <div className="biz-heading">
+        <span className="biz-heading-line" />
+        <span>Booth Business Details</span>
+      </div>
+
+      <div className="biz-grid">
+        <div className="biz-item biz-price">
+          <span className="biz-icon">
+            <Wallet />
+          </span>
+          <span className="biz-label">Booth Price</span>
+          <strong className="biz-value">{formatBoothPrice(meta)}</strong>
+        </div>
+
+        <div className="biz-item biz-area">
+          <span className="biz-icon">
+            <Ruler />
+          </span>
+          <span className="biz-label">Booth Area</span>
+          <strong className="biz-value">{formatBoothArea(meta)}</strong>
+        </div>
+
+        <div className="biz-item biz-location">
+          <span className="biz-icon">
+            <MapPin />
+          </span>
+          <span className="biz-label">Booth Location</span>
+          <strong className="biz-value">{getBoothLocation(meta)}</strong>
+        </div>
+      </div>
     </div>
   );
 }
@@ -157,8 +210,8 @@ export default function InvestorDashboard({ user }) {
             place-content: center;
             justify-items: center;
             gap: 20px;
-            color: rgba(203,216,231,.55);
-            background: #020914;
+            color: var(--hx-muted, #55697d);
+            background: var(--hx-bg, #eef4fb);
             font-family: 'Inter', sans-serif;
           }
 
@@ -174,8 +227,8 @@ export default function InvestorDashboard({ user }) {
             position: absolute;
             inset: 0;
             border: 1px solid transparent;
-            border-top-color: #20d8dc;
-            border-right-color: rgba(217,145,69,.48);
+            border-top-color: #0aa2b4;
+            border-right-color: rgba(178,134,45,.5);
             border-radius: 50%;
             animation: investorLoaderSpin 2.2s linear infinite;
           }
@@ -194,7 +247,7 @@ export default function InvestorDashboard({ user }) {
           .investor-loader-rings svg {
             width: 34px;
             height: 34px;
-            color: #20d8dc;
+            color: #0aa2b4;
           }
 
           @keyframes investorLoaderSpin {
@@ -392,6 +445,8 @@ export default function InvestorDashboard({ user }) {
                   </motion.button>
                 </div>
 
+                <BoothBusinessDetails boothId={selectedBooth.boothId} />
+
                 <form onSubmit={handleReserve} className="reservation-form">
                   <div className="form-field">
                     <label>Applicant Company</label>
@@ -484,6 +539,8 @@ export default function InvestorDashboard({ user }) {
                 </div>
 
                 <StatusBadge status={selectedBooth.status} />
+
+                <BoothBusinessDetails boothId={selectedBooth.boothId} />
 
                 {selectedBooth.companyDetails && (
                   <motion.div
@@ -586,8 +643,8 @@ export default function InvestorDashboard({ user }) {
           position: relative;
           display: flex;
           overflow: hidden;
-          color: #f6f9fd;
-          background: #020914;
+          color: var(--hx-text, #0d2338);
+          background: var(--hx-bg, #eef4fb);
           font-family: 'Inter', sans-serif;
           isolation: isolate;
         }
@@ -603,10 +660,10 @@ export default function InvestorDashboard({ user }) {
         .investor-grid {
           position: absolute;
           inset: 0;
-          opacity: .18;
+          opacity: .5;
           background-image:
-            linear-gradient(rgba(32,216,220,.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(32,216,220,.04) 1px, transparent 1px);
+            linear-gradient(rgba(11,147,166,.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(11,147,166,.05) 1px, transparent 1px);
           background-size: 78px 78px;
           animation: investorGridMove 32s linear infinite;
         }
@@ -624,8 +681,8 @@ export default function InvestorDashboard({ user }) {
           height: 520px;
           right: -180px;
           top: 90px;
-          opacity: .11;
-          background: #09b8c6;
+          opacity: .16;
+          background: #17d9d4;
           animation: investorCyanOrb 15s ease-in-out infinite alternate;
         }
 
@@ -634,8 +691,8 @@ export default function InvestorDashboard({ user }) {
           height: 420px;
           left: -170px;
           bottom: -120px;
-          opacity: .08;
-          background: #c87835;
+          opacity: .14;
+          background: #e6be6a;
           animation: investorGoldOrb 13s ease-in-out infinite alternate;
         }
 
@@ -651,8 +708,8 @@ export default function InvestorDashboard({ user }) {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 11px rgba(229,160,82,.75);
+          background: #d2aa55;
+          box-shadow: 0 0 11px rgba(210,170,85,.6);
         }
 
         .investor-wave-lines {
@@ -668,7 +725,7 @@ export default function InvestorDashboard({ user }) {
           position: absolute;
           width: 100%;
           height: 68px;
-          border-top: 1px solid rgba(217,145,69,.3);
+          border-top: 1px solid rgba(169,121,31,.26);
           border-radius: 50%;
           animation: investorWaveMove 6.5s ease-in-out infinite;
         }
@@ -691,10 +748,10 @@ export default function InvestorDashboard({ user }) {
           position: relative;
           flex: 1;
           overflow: hidden;
-          border-right: 1px solid rgba(32,216,220,.18);
+          border-right: 1px solid var(--hx-line, rgba(14,55,92,.12));
           background:
-            radial-gradient(circle at 70% 20%, rgba(5,79,91,.12), transparent 35%),
-            #020914;
+            radial-gradient(circle at 70% 20%, rgba(10,162,180,.1), transparent 35%),
+            var(--hx-bg, #eef4fb);
         }
 
         .investment-hall-card {
@@ -705,14 +762,14 @@ export default function InvestorDashboard({ user }) {
           z-index: 10;
           overflow: hidden;
           padding: 17px 19px;
-          border: 1px solid rgba(32,216,220,.28);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 18px;
           background:
-            linear-gradient(145deg, rgba(8,38,53,.88), rgba(3,17,30,.92));
+            linear-gradient(145deg, rgba(255,255,255,.92), rgba(243,248,253,.88));
           backdrop-filter: blur(20px);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.05),
-            0 18px 42px rgba(0,0,0,.28);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 18px 42px rgba(20,55,95,.12);
         }
 
         .hall-card-shimmer,
@@ -721,7 +778,7 @@ export default function InvestorDashboard({ user }) {
           inset: 0;
           pointer-events: none;
           background:
-            linear-gradient(120deg, transparent 20%, rgba(255,255,255,.07), transparent 70%);
+            linear-gradient(120deg, transparent 20%, rgba(11,147,166,.06), transparent 70%);
         }
 
         .hall-card-label {
@@ -730,7 +787,7 @@ export default function InvestorDashboard({ user }) {
           display: flex;
           align-items: center;
           gap: 8px;
-          color: #e3a04f;
+          color: var(--hx-gold, #a9791f);
         }
 
         .hall-card-label svg {
@@ -740,9 +797,9 @@ export default function InvestorDashboard({ user }) {
 
         .hall-card-label span {
           padding: 5px 9px;
-          border: 1px solid rgba(227,160,79,.2);
+          border: 1px solid rgba(169,121,31,.25);
           border-radius: 999px;
-          background: rgba(227,160,79,.075);
+          background: rgba(210,170,85,.12);
           font-size: 9px;
           font-weight: 750;
           letter-spacing: .08em;
@@ -753,7 +810,7 @@ export default function InvestorDashboard({ user }) {
           margin: 10px 0 0;
           position: relative;
           z-index: 2;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 21px;
         }
 
@@ -761,7 +818,7 @@ export default function InvestorDashboard({ user }) {
           margin: 7px 0 0;
           position: relative;
           z-index: 2;
-          color: rgba(181,197,215,.58);
+          color: var(--hx-muted, #55697d);
           font-size: 11px;
         }
 
@@ -772,8 +829,8 @@ export default function InvestorDashboard({ user }) {
           position: relative;
           z-index: 2;
           border-radius: 999px;
-          background: linear-gradient(90deg, #20d8dc, #d99145);
-          box-shadow: 0 0 12px rgba(32,216,220,.2);
+          background: linear-gradient(90deg, #0aa2b4, #d2aa55);
+          box-shadow: 0 0 12px rgba(23,217,212,.25);
         }
 
         .hall-legend {
@@ -785,9 +842,9 @@ export default function InvestorDashboard({ user }) {
           align-items: center;
           gap: 17px;
           padding: 11px 15px;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 15px;
-          background: rgba(3,20,34,.8);
+          background: rgba(255,255,255,.88);
           backdrop-filter: blur(18px);
         }
 
@@ -804,7 +861,7 @@ export default function InvestorDashboard({ user }) {
         }
 
         .hall-legend small {
-          color: rgba(183,198,216,.58);
+          color: var(--hx-muted, #55697d);
           font-size: 10px;
         }
 
@@ -831,7 +888,7 @@ export default function InvestorDashboard({ user }) {
           bottom: 0;
           z-index: 5;
           background:
-            linear-gradient(90deg, transparent, rgba(32,216,220,.8), rgba(217,145,69,.65), transparent);
+            linear-gradient(90deg, transparent, rgba(10,162,180,.65), rgba(210,170,85,.55), transparent);
         }
 
         .investor-control-panel {
@@ -843,9 +900,9 @@ export default function InvestorDashboard({ user }) {
           flex-direction: column;
           overflow: hidden;
           background:
-            linear-gradient(180deg, rgba(6,24,39,.97), rgba(2,13,25,.99));
+            linear-gradient(180deg, rgba(255,255,255,.96), rgba(243,248,253,.98));
           backdrop-filter: blur(24px);
-          box-shadow: -22px 0 50px rgba(0,0,0,.24);
+          box-shadow: -22px 0 50px rgba(20,55,95,.1);
         }
 
         .panel-orb-cyan {
@@ -853,8 +910,8 @@ export default function InvestorDashboard({ user }) {
           height: 250px;
           right: -90px;
           top: -80px;
-          opacity: .08;
-          background: #20d8dc;
+          opacity: .14;
+          background: #17d9d4;
         }
 
         .panel-orb-gold {
@@ -862,8 +919,8 @@ export default function InvestorDashboard({ user }) {
           height: 230px;
           left: -90px;
           bottom: -90px;
-          opacity: .06;
-          background: #d99145;
+          opacity: .12;
+          background: #e6be6a;
         }
 
         .investor-message {
@@ -880,15 +937,15 @@ export default function InvestorDashboard({ user }) {
         }
 
         .message-success {
-          color: #16d8a0;
-          border-color: rgba(22,216,160,.25);
-          background: rgba(22,216,160,.075);
+          color: #067a53;
+          border-color: rgba(15,157,118,.3);
+          background: rgba(15,157,118,.1);
         }
 
         .message-error {
-          color: #ff755f;
-          border-color: rgba(255,117,95,.25);
-          background: rgba(255,117,95,.075);
+          color: #b4372a;
+          border-color: rgba(214,69,69,.28);
+          background: rgba(214,69,69,.08);
         }
 
         .investor-panel-content {
@@ -898,7 +955,7 @@ export default function InvestorDashboard({ user }) {
           overflow-y: auto;
           padding: 24px;
           scrollbar-width: thin;
-          scrollbar-color: rgba(32,216,220,.3) rgba(255,255,255,.02);
+          scrollbar-color: rgba(10,162,180,.4) rgba(13,35,56,.05);
         }
 
         .investor-panel-content::-webkit-scrollbar {
@@ -906,13 +963,13 @@ export default function InvestorDashboard({ user }) {
         }
 
         .investor-panel-content::-webkit-scrollbar-track {
-          background: rgba(255,255,255,.02);
+          background: rgba(13,35,56,.05);
         }
 
         .investor-panel-content::-webkit-scrollbar-thumb {
           border-radius: 999px;
           background:
-            linear-gradient(180deg, rgba(32,216,220,.48), rgba(217,145,69,.42));
+            linear-gradient(180deg, rgba(10,162,180,.45), rgba(210,170,85,.4));
         }
 
         .investor-empty-state {
@@ -938,8 +995,8 @@ export default function InvestorDashboard({ user }) {
           position: absolute;
           inset: 0;
           border: 1px solid transparent;
-          border-top-color: #20d8dc;
-          border-right-color: rgba(217,145,69,.42);
+          border-top-color: #0aa2b4;
+          border-right-color: rgba(178,134,45,.45);
           border-radius: 50%;
         }
 
@@ -947,8 +1004,8 @@ export default function InvestorDashboard({ user }) {
           inset: 15px;
           border-top-color: transparent;
           border-right-color: transparent;
-          border-bottom-color: rgba(32,216,220,.48);
-          border-left-color: #e3a04f;
+          border-bottom-color: rgba(10,162,180,.5);
+          border-left-color: #b0832e;
         }
 
         .empty-booth-orbit > div {
@@ -956,12 +1013,12 @@ export default function InvestorDashboard({ user }) {
           height: 66px;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 19px;
-          color: rgba(32,216,220,.7);
+          color: var(--hx-cyan, #0b93a6);
           background:
-            linear-gradient(145deg, rgba(32,216,220,.12), rgba(217,145,69,.05));
-          box-shadow: 0 0 28px rgba(32,216,220,.08);
+            linear-gradient(145deg, rgba(23,217,212,.12), rgba(210,170,85,.07));
+          box-shadow: 0 0 28px rgba(23,217,212,.12);
         }
 
         .empty-booth-orbit svg {
@@ -971,14 +1028,14 @@ export default function InvestorDashboard({ user }) {
 
         .investor-empty-state h3 {
           margin: 0 0 10px;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 17px;
         }
 
         .investor-empty-state p {
           max-width: 315px;
           margin: 0;
-          color: rgba(168,185,205,.48);
+          color: #7a8ea0;
           font-size: 12px;
           line-height: 1.65;
         }
@@ -999,10 +1056,10 @@ export default function InvestorDashboard({ user }) {
           justify-content: space-between;
           overflow: hidden;
           padding: 16px 18px;
-          border: 1px solid rgba(32,216,220,.22);
+          border: 1px solid rgba(11,147,166,.28);
           border-radius: 18px;
           background:
-            linear-gradient(145deg, rgba(32,216,220,.08), rgba(217,145,69,.055));
+            linear-gradient(145deg, rgba(23,217,212,.1), rgba(210,170,85,.08));
         }
 
         .reserve-header-glow {
@@ -1012,7 +1069,7 @@ export default function InvestorDashboard({ user }) {
           left: -60px;
           top: -70px;
           border-radius: 50%;
-          background: rgba(217,145,69,.1);
+          background: rgba(210,170,85,.14);
           filter: blur(35px);
         }
 
@@ -1029,11 +1086,11 @@ export default function InvestorDashboard({ user }) {
         .details-title > svg {
           width: 22px;
           height: 22px;
-          color: #e3a04f;
+          color: #b0832e;
         }
 
         .details-title > svg {
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .reserve-title div,
@@ -1045,7 +1102,7 @@ export default function InvestorDashboard({ user }) {
 
         .reserve-title span,
         .details-title span {
-          color: rgba(227,160,79,.72);
+          color: var(--hx-gold, #a9791f);
           font-size: 9px;
           font-weight: 750;
           letter-spacing: .09em;
@@ -1053,13 +1110,13 @@ export default function InvestorDashboard({ user }) {
         }
 
         .details-title span {
-          color: rgba(32,216,220,.7);
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .reserve-title h3,
         .details-title h3 {
           margin: 0;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 16px;
         }
 
@@ -1070,17 +1127,17 @@ export default function InvestorDashboard({ user }) {
           z-index: 2;
           display: grid;
           place-items: center;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 50%;
-          color: rgba(183,198,216,.45);
-          background: rgba(255,255,255,.025);
+          color: var(--hx-muted, #55697d);
+          background: var(--hx-panel-strong, #ffffff);
           cursor: pointer;
           transition: .3s ease;
         }
 
         .panel-close:hover {
-          color: white;
-          border-color: rgba(32,216,220,.24);
+          color: var(--hx-text, #0d2338);
+          border-color: rgba(11,147,166,.35);
         }
 
         .panel-close svg {
@@ -1101,7 +1158,7 @@ export default function InvestorDashboard({ user }) {
         }
 
         .form-field label {
-          color: rgba(215,225,237,.68);
+          color: var(--hx-muted-strong, #3c516a);
           font-size: 11px;
           font-weight: 650;
         }
@@ -1112,17 +1169,17 @@ export default function InvestorDashboard({ user }) {
           align-items: center;
           gap: 10px;
           padding: 0 15px;
-          border: 1px solid rgba(255,255,255,.07);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 15px;
-          color: rgba(199,212,228,.62);
-          background: rgba(255,255,255,.025);
+          color: var(--hx-muted, #55697d);
+          background: rgba(13,35,56,.03);
           font-size: 12px;
         }
 
         .readonly-field svg {
           width: 17px;
           height: 17px;
-          color: #e3a04f;
+          color: #b0832e;
         }
 
         .input-wrapper,
@@ -1138,17 +1195,17 @@ export default function InvestorDashboard({ user }) {
           top: 50%;
           z-index: 2;
           transform: translateY(-50%);
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .input-wrapper input,
         .textarea-wrapper textarea {
           width: 100%;
           outline: none;
-          border: 1px solid rgba(255,255,255,.09);
+          border: 1px solid rgba(14,55,92,.16);
           border-radius: 15px;
-          color: #f4f8fd;
-          background: rgba(2,12,23,.72);
+          color: var(--hx-text, #0d2338);
+          background: var(--hx-panel-strong, #ffffff);
           font-family: inherit;
           font-size: 12px;
           transition: .3s ease;
@@ -1167,15 +1224,15 @@ export default function InvestorDashboard({ user }) {
 
         .input-wrapper input::placeholder,
         .textarea-wrapper textarea::placeholder {
-          color: rgba(173,190,210,.28);
+          color: rgba(13,35,56,.35);
         }
 
         .input-wrapper input:focus,
         .textarea-wrapper textarea:focus {
-          border-color: rgba(32,216,220,.52);
+          border-color: rgba(11,147,166,.55);
           box-shadow:
-            0 0 0 4px rgba(32,216,220,.055),
-            0 0 24px rgba(32,216,220,.07);
+            0 0 0 4px var(--hx-focus, rgba(11,147,166,.22)),
+            0 0 24px rgba(23,217,212,.1);
         }
 
         .input-light {
@@ -1188,8 +1245,8 @@ export default function InvestorDashboard({ user }) {
           transform: scaleX(.4);
           border-radius: 999px;
           background:
-            linear-gradient(90deg, transparent, #20d8dc, #d99145, transparent);
-          box-shadow: 0 0 16px rgba(32,216,220,.35);
+            linear-gradient(90deg, transparent, #0aa2b4, #d2aa55, transparent);
+          box-shadow: 0 0 16px rgba(23,217,212,.3);
           transition: .3s ease;
         }
 
@@ -1207,14 +1264,14 @@ export default function InvestorDashboard({ user }) {
           justify-content: center;
           gap: 10px;
           overflow: hidden;
-          border: 1px solid rgba(229,160,82,.62);
+          border: 1px solid rgba(10,162,180,.45);
           border-radius: 16px;
-          color: white;
+          color: #001116;
           background:
-            linear-gradient(135deg, rgba(32,148,163,.86), rgba(199,121,56,.92));
+            linear-gradient(135deg, #27e8df, #00a8bd 58%, #d3aa56 135%);
           box-shadow:
-            0 14px 32px rgba(32,136,166,.15),
-            0 10px 26px rgba(199,121,56,.12);
+            0 12px 35px rgba(0,196,202,.2),
+            inset 0 1px 0 rgba(255,255,255,.42);
           font-size: 13px;
           font-weight: 750;
           cursor: pointer;
@@ -1241,6 +1298,152 @@ export default function InvestorDashboard({ user }) {
           animation: investorButtonShimmer 3.8s ease-in-out infinite;
         }
 
+        /* --- Booth Business Details (Investor-only presentation data) --- */
+        .booth-biz {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .biz-heading {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          color: var(--hx-gold, #a9791f);
+          font-size: 9px;
+          font-weight: 750;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+          animation: bizItemIn .4s var(--hx-ease, cubic-bezier(.16,1,.3,1)) both;
+        }
+
+        .biz-heading-line {
+          width: 26px;
+          height: 2px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, #0aa2b4, #d2aa55);
+          box-shadow: 0 0 10px rgba(23,217,212,.25);
+        }
+
+        .biz-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+
+        .biz-item {
+          --biz-accent: #0b93a6;
+          --biz-accent-rgb: 11,147,166;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          overflow: hidden;
+          padding: 13px 14px 14px;
+          border: 1px solid rgba(var(--biz-accent-rgb), .26);
+          border-radius: 14px;
+          background:
+            linear-gradient(150deg, rgba(var(--biz-accent-rgb), .07), rgba(255,255,255,.92));
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 10px 24px rgba(20,55,95,.08);
+          animation: bizItemIn .45s var(--hx-ease, cubic-bezier(.16,1,.3,1)) both;
+          transition: border-color .25s ease, box-shadow .25s ease;
+        }
+
+        .biz-item:hover {
+          border-color: rgba(var(--biz-accent-rgb), .5);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 14px 28px rgba(20,55,95,.12),
+            0 0 18px rgba(var(--biz-accent-rgb), .12);
+        }
+
+        /* Small accent line along the top of each card */
+        .biz-item::before {
+          content: "";
+          position: absolute;
+          left: 12px;
+          right: 55%;
+          top: 0;
+          height: 2px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, rgba(var(--biz-accent-rgb), .75), transparent);
+        }
+
+        .biz-item:nth-child(1) { animation-delay: .05s; }
+        .biz-item:nth-child(2) { animation-delay: .11s; }
+        .biz-item:nth-child(3) { animation-delay: .17s; }
+
+        @keyframes bizItemIn {
+          from { opacity: 0; transform: translateY(10px) scale(.985); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .biz-price {
+          --biz-accent: #0b93a6;
+          --biz-accent-rgb: 11,147,166;
+        }
+
+        .biz-area {
+          --biz-accent: #7c5cff;
+          --biz-accent-rgb: 124,92,255;
+        }
+
+        .biz-location {
+          --biz-accent: #ff5fa2;
+          --biz-accent-rgb: 255,95,162;
+          grid-column: 1 / -1;
+        }
+
+        .biz-icon {
+          width: 30px;
+          height: 30px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(var(--biz-accent-rgb), .3);
+          border-radius: 10px;
+          color: var(--biz-accent);
+          background: rgba(var(--biz-accent-rgb), .1);
+        }
+
+        .biz-icon svg {
+          width: 15px;
+          height: 15px;
+        }
+
+        .biz-label {
+          color: var(--hx-muted-strong, #3c516a);
+          font-size: 9px;
+          font-weight: 750;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+
+        .biz-value {
+          color: var(--hx-text, #0d2338);
+          font-size: 14px;
+          font-weight: 750;
+          line-height: 1.45;
+          overflow-wrap: anywhere;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .biz-price .biz-value {
+          color: var(--hx-cyan-deep, #076e7e);
+          font-size: 17px;
+        }
+
+        @media (max-width: 400px) {
+          .biz-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .biz-location {
+            grid-column: auto;
+          }
+        }
+
         .investor-status {
           width: fit-content;
           display: inline-flex;
@@ -1262,34 +1465,34 @@ export default function InvestorDashboard({ user }) {
         }
 
         .status-available {
-          color: #16d8a0;
-          border-color: rgba(22,216,160,.22);
-          background: rgba(22,216,160,.075);
+          color: #067a53;
+          border-color: rgba(15,157,118,.3);
+          background: rgba(15,157,118,.1);
         }
 
         .status-pending {
-          color: #e3a04f;
-          border-color: rgba(227,160,79,.22);
-          background: rgba(227,160,79,.075);
+          color: #a9791f;
+          border-color: rgba(169,121,31,.3);
+          background: rgba(210,170,85,.14);
         }
 
         .status-reserved {
-          color: #ff7059;
-          border-color: rgba(255,112,89,.22);
-          background: rgba(255,112,89,.075);
+          color: #b4372a;
+          border-color: rgba(214,69,69,.28);
+          background: rgba(214,69,69,.08);
         }
 
         .company-details-card {
           position: relative;
           overflow: hidden;
           padding: 20px;
-          border: 1px solid rgba(32,216,220,.18);
+          border: 1px solid rgba(11,147,166,.25);
           border-radius: 20px;
           background:
-            linear-gradient(145deg, rgba(8,35,49,.9), rgba(3,17,30,.94));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.04),
-            0 18px 40px rgba(0,0,0,.22);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 18px 40px rgba(20,55,95,.1);
         }
 
         .company-card-orb {
@@ -1304,7 +1507,7 @@ export default function InvestorDashboard({ user }) {
           height: 130px;
           right: -55px;
           top: -55px;
-          background: rgba(32,216,220,.1);
+          background: rgba(23,217,212,.14);
         }
 
         .company-card-orb-gold {
@@ -1312,7 +1515,7 @@ export default function InvestorDashboard({ user }) {
           height: 120px;
           left: -55px;
           bottom: -55px;
-          background: rgba(217,145,69,.08);
+          background: rgba(210,170,85,.12);
         }
 
         .company-details-main {
@@ -1329,11 +1532,11 @@ export default function InvestorDashboard({ user }) {
           display: grid;
           place-items: center;
           flex: 0 0 auto;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 15px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
           background:
-            linear-gradient(145deg, rgba(32,216,220,.14), rgba(217,145,69,.06));
+            linear-gradient(145deg, rgba(23,217,212,.14), rgba(210,170,85,.08));
         }
 
         .company-details-icon svg {
@@ -1351,7 +1554,7 @@ export default function InvestorDashboard({ user }) {
         .company-details-main span,
         .company-info-box > span,
         .company-description > span {
-          color: rgba(227,160,79,.7);
+          color: var(--hx-gold, #a9791f);
           font-size: 9px;
           font-weight: 700;
           letter-spacing: .1em;
@@ -1360,7 +1563,7 @@ export default function InvestorDashboard({ user }) {
 
         .company-details-main strong {
           overflow: hidden;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 16px;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -1372,9 +1575,9 @@ export default function InvestorDashboard({ user }) {
           z-index: 2;
           margin-top: 14px;
           padding: 13px;
-          border: 1px solid rgba(255,255,255,.06);
+          border: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           border-radius: 13px;
-          background: rgba(255,255,255,.025);
+          background: rgba(13,35,56,.03);
         }
 
         .company-info-box strong {
@@ -1382,19 +1585,19 @@ export default function InvestorDashboard({ user }) {
           display: flex;
           align-items: center;
           gap: 7px;
-          color: rgba(235,241,249,.82);
+          color: #33475a;
           font-size: 11px;
         }
 
         .company-info-box strong svg {
           width: 13px;
           height: 13px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .company-description p {
           margin: 8px 0 0;
-          color: rgba(204,216,230,.7);
+          color: var(--hx-muted, #55697d);
           font-size: 12px;
           line-height: 1.65;
         }
@@ -1418,15 +1621,15 @@ export default function InvestorDashboard({ user }) {
         }
 
         .reserved-message {
-          color: #ff7059;
-          border-color: rgba(255,112,89,.16);
-          background: rgba(255,112,89,.055);
+          color: #b4372a;
+          border-color: rgba(214,69,69,.22);
+          background: rgba(214,69,69,.06);
         }
 
         .pending-message {
-          color: #e3a04f;
-          border-color: rgba(227,160,79,.16);
-          background: rgba(227,160,79,.055);
+          color: #a9791f;
+          border-color: rgba(169,121,31,.25);
+          background: rgba(210,170,85,.12);
         }
 
         @keyframes investorGridMove {
@@ -1463,7 +1666,7 @@ export default function InvestorDashboard({ user }) {
             min-height: 500px;
             flex: none;
             border-right: 0;
-            border-bottom: 1px solid rgba(32,216,220,.18);
+            border-bottom: 1px solid var(--hx-line, rgba(14,55,92,.12));
           }
 
           .investor-control-panel {

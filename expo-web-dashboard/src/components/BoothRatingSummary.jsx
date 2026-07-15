@@ -20,10 +20,10 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
         position: "relative",
         zIndex: 2,
         padding: 16,
-        border: "1px solid rgba(227,160,79,0.24)",
+        border: "1px solid rgba(169,121,31,0.28)",
         borderRadius: 16,
         background:
-          "linear-gradient(145deg, rgba(40,30,12,0.34), rgba(3,17,30,0.5))",
+          "linear-gradient(145deg, rgba(210,170,85,0.12), rgba(255,255,255,0.9))",
       }}
     >
       <div
@@ -36,7 +36,7 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
       >
         <span
           style={{
-            color: "rgba(227,160,79,0.72)",
+            color: "#a9791f",
             fontSize: 9,
             fontWeight: 700,
             letterSpacing: "0.1em",
@@ -45,7 +45,7 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
         >
           Visitor Ratings
         </span>
-        <span style={{ fontSize: 10, color: "rgba(183,198,216,0.5)" }}>
+        <span style={{ fontSize: 10, color: "#55697d" }}>
           {count
             ? `${count.toLocaleString("en-US")} rating${count > 1 ? "s" : ""}`
             : "No ratings yet"}
@@ -67,7 +67,7 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
           {[1, 2, 3, 4, 5].map((s) => (
             <span
               key={s}
-              style={{ color: s <= filled ? "#e5a83a" : "rgba(255,255,255,0.16)" }}
+              style={{ color: s <= filled ? "#c9962e" : "rgba(13,35,56,0.16)" }}
             >
               ★
             </span>
@@ -76,7 +76,7 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
 
         <strong
           style={{
-            color: "#fff",
+            color: "#0d2338",
             fontSize: 24,
             lineHeight: 1,
             fontVariantNumeric: "tabular-nums",
@@ -84,7 +84,7 @@ export default function BoothRatingSummary({ ratingSum = 0, ratingCount = 0 }) {
         >
           {count ? avg.toFixed(1) : "—"}
         </strong>
-        <span style={{ color: "rgba(183,198,216,0.5)", fontSize: 11 }}>/ 5</span>
+        <span style={{ color: "#55697d", fontSize: 11 }}>/ 5</span>
       </div>
     </div>
   );

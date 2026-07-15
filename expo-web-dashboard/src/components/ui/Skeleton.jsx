@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 export function SkeletonBox({ className = '', width = '100%', height = '20px' }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-lg bg-white/5 ${className}`}
+      className={`relative overflow-hidden rounded-lg bg-[#0d2338]/[0.07] ${className}`}
       style={{ width, height }}
     >
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
         animate={{ x: ['-100%', '100%'] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       />

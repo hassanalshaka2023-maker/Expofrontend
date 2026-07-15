@@ -356,9 +356,9 @@ export default function GlobalQRGenerator() {
                 animate={{
                   y: [0, -6, 0],
                   boxShadow: [
-                    "0 22px 50px rgba(0,0,0,.36), 0 0 0 rgba(32,216,220,0)",
-                    "0 28px 60px rgba(0,0,0,.42), 0 0 34px rgba(32,216,220,.14)",
-                    "0 22px 50px rgba(0,0,0,.36), 0 0 0 rgba(32,216,220,0)",
+                    "0 22px 50px rgba(20,55,95,.18), 0 0 0 rgba(23,217,212,0)",
+                    "0 28px 60px rgba(20,55,95,.24), 0 0 34px rgba(23,217,212,.2)",
+                    "0 22px 50px rgba(20,55,95,.18), 0 0 0 rgba(23,217,212,0)",
                   ],
                 }}
                 transition={{
@@ -379,7 +379,7 @@ export default function GlobalQRGenerator() {
                   level="H"
                   includeMargin={false}
                   bgColor="#FFFFFF"
-                  fgColor="#04111f"
+                  fgColor="#0c3455"
                 />
               </motion.div>
 
@@ -420,8 +420,8 @@ export default function GlobalQRGenerator() {
           place-items: center;
           overflow: hidden;
           padding: 48px 28px;
-          color: #f6f9fd;
-          background: #020914;
+          color: var(--hx-text, #0d2338);
+          background: var(--hx-bg, #eef4fb);
           font-family: 'Inter', sans-serif;
           isolation: isolate;
         }
@@ -437,10 +437,10 @@ export default function GlobalQRGenerator() {
         .qr-grid {
           position: absolute;
           inset: 0;
-          opacity: .18;
+          opacity: .5;
           background-image:
-            linear-gradient(rgba(32,216,220,.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(32,216,220,.04) 1px, transparent 1px);
+            linear-gradient(rgba(11,147,166,.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(11,147,166,.05) 1px, transparent 1px);
           background-size: 78px 78px;
           animation: qrGridMove 32s linear infinite;
         }
@@ -456,8 +456,8 @@ export default function GlobalQRGenerator() {
           height: 560px;
           right: -180px;
           top: 80px;
-          opacity: .12;
-          background: #09b8c6;
+          opacity: .16;
+          background: #17d9d4;
           animation: qrCyanOrb 15s ease-in-out infinite alternate;
         }
 
@@ -466,8 +466,8 @@ export default function GlobalQRGenerator() {
           height: 460px;
           left: -170px;
           bottom: -120px;
-          opacity: .09;
-          background: #c87835;
+          opacity: .14;
+          background: #e6be6a;
           animation: qrGoldOrb 13s ease-in-out infinite alternate;
         }
 
@@ -483,8 +483,8 @@ export default function GlobalQRGenerator() {
           width: 4px;
           height: 4px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 11px rgba(229,160,82,.75);
+          background: #d2aa55;
+          box-shadow: 0 0 11px rgba(210,170,85,.6);
         }
 
         .qr-wave-lines {
@@ -501,7 +501,7 @@ export default function GlobalQRGenerator() {
           position: absolute;
           width: 100%;
           height: 70px;
-          border-top: 1px solid rgba(217,145,69,.3);
+          border-top: 1px solid rgba(169,121,31,.26);
           border-radius: 50%;
           animation: qrWaveMove 6.5s ease-in-out infinite;
         }
@@ -551,14 +551,14 @@ export default function GlobalQRGenerator() {
           width: 9px;
           height: 9px;
           transform: rotate(45deg);
-          background: #e5a052;
-          box-shadow: 0 0 12px rgba(229,160,82,.55);
+          background: #d2aa55;
+          box-shadow: 0 0 12px rgba(210,170,85,.5);
         }
 
         .qr-accent-line {
           width: 74px;
           height: 1px;
-          background: linear-gradient(90deg, #d99145, transparent);
+          background: linear-gradient(90deg, #d2aa55, transparent);
         }
 
         .qr-admin-label {
@@ -568,10 +568,10 @@ export default function GlobalQRGenerator() {
           align-items: center;
           gap: 9px;
           padding: 7px 12px;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.28);
           border-radius: 999px;
-          color: #20d8dc;
-          background: rgba(32,216,220,.065);
+          color: var(--hx-cyan, #0b93a6);
+          background: rgba(11,147,166,.07);
           font-size: 10px;
           font-weight: 750;
           letter-spacing: .08em;
@@ -585,28 +585,65 @@ export default function GlobalQRGenerator() {
 
         .qr-hero h1 {
           margin: 0;
-          color: #f4f6fa;
+          color: var(--hx-text, #0d2338);
           font-family: 'Montserrat', 'Inter', sans-serif;
           font-size: clamp(42px, 5vw, 70px);
           font-weight: 500;
           line-height: .98;
           letter-spacing: .012em;
           text-transform: uppercase;
+          animation: qrTitleIn .8s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .14s both;
+        }
+
+        @keyframes qrTitleIn {
+          from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .qr-hero h1 em {
-          color: #20d8dc;
           font-style: normal;
           font-weight: 600;
-          text-shadow: 0 0 28px rgba(32,216,220,.16);
+          color: #0b93a6;
+          background: linear-gradient(105deg, #0b93a6 30%, #17d9d4 50%, #0b93a6 70%);
+          background-size: 240% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 0 28px rgba(23,217,212,.22);
+          animation: qrEmSheen 1.6s ease-in-out 1s both;
+        }
+
+        @keyframes qrEmSheen {
+          from { background-position: 130% 0; }
+          to { background-position: 0% 0; }
         }
 
         .qr-hero p {
           max-width: 650px;
           margin: 20px 0 0;
-          color: rgba(181,197,215,.58);
+          color: var(--hx-muted, #55697d);
           font-size: 15px;
           line-height: 1.7;
+          animation: qrRiseIn .7s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .32s both;
+        }
+
+        @keyframes qrRiseIn {
+          from { opacity: 0; transform: translateY(14px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .qr-admin-label {
+          animation: qrRiseIn .6s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .08s both;
+        }
+
+        .qr-hero-accent {
+          transform-origin: left center;
+          animation: qrAccentIn .6s var(--hx-ease, cubic-bezier(.16,1,.3,1)) .02s both;
+        }
+
+        @keyframes qrAccentIn {
+          from { opacity: 0; transform: scaleX(.35); }
+          to { opacity: 1; transform: scaleX(1); }
         }
 
         .qr-hero-symbol {
@@ -616,22 +653,22 @@ export default function GlobalQRGenerator() {
           display: grid;
           place-items: center;
           flex: 0 0 auto;
-          border: 1px solid rgba(32,216,220,.24);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 36px;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
           background:
-            linear-gradient(145deg, rgba(32,216,220,.11), rgba(217,145,69,.05));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.05),
-            0 26px 60px rgba(0,0,0,.3),
-            0 0 35px rgba(32,216,220,.07);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 26px 60px rgba(20,55,95,.14),
+            0 0 35px rgba(23,217,212,.1);
         }
 
         .qr-hero-symbol > svg {
           width: 64px;
           height: 64px;
           stroke-width: 1.35;
-          filter: drop-shadow(0 0 12px rgba(32,216,220,.25));
+          filter: drop-shadow(0 0 12px rgba(23,217,212,.3));
         }
 
         .symbol-orbit {
@@ -643,16 +680,16 @@ export default function GlobalQRGenerator() {
         .symbol-orbit-one {
           width: 178px;
           height: 178px;
-          border-top-color: rgba(32,216,220,.52);
-          border-right-color: rgba(217,145,69,.25);
+          border-top-color: rgba(10,162,180,.5);
+          border-right-color: rgba(178,134,45,.3);
           animation: qrSpin 10s linear infinite;
         }
 
         .symbol-orbit-two {
           width: 205px;
           height: 205px;
-          border-bottom-color: rgba(32,216,220,.25);
-          border-left-color: rgba(217,145,69,.42);
+          border-bottom-color: rgba(10,162,180,.25);
+          border-left-color: rgba(178,134,45,.4);
           animation: qrSpin 15s linear infinite reverse;
         }
 
@@ -662,8 +699,8 @@ export default function GlobalQRGenerator() {
           position: absolute;
           bottom: 17px;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 24px 7px rgba(229,160,82,.35);
+          background: #d2aa55;
+          box-shadow: 0 0 24px 7px rgba(210,170,85,.3);
           animation: qrPulse 1.8s ease-in-out infinite;
         }
 
@@ -675,13 +712,36 @@ export default function GlobalQRGenerator() {
           gap: 32px;
           overflow: hidden;
           padding: 34px;
-          border: 1px solid rgba(55,183,205,.42);
+          border: 1px solid rgba(11,147,166,.25);
           border-radius: 26px;
           background:
-            linear-gradient(150deg, rgba(8,30,47,.9), rgba(3,15,28,.96));
+            linear-gradient(150deg, #ffffff, #f3f8fd);
           box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.045),
-            0 28px 68px rgba(0,0,0,.34);
+            inset 0 1px 0 rgba(255,255,255,.9),
+            0 28px 68px rgba(20,55,95,.12);
+          animation: qrCardGlowSettle 1.8s ease .5s both;
+        }
+
+        /* Border glow bloom on entrance that settles calm */
+        @keyframes qrCardGlowSettle {
+          0% {
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,.9),
+              0 28px 68px rgba(20,55,95,.12),
+              0 0 0 rgba(23,217,212,0);
+          }
+          40% {
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,.9),
+              0 28px 68px rgba(20,55,95,.12),
+              0 0 52px rgba(23,217,212,.18);
+          }
+          100% {
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,.9),
+              0 28px 68px rgba(20,55,95,.12),
+              0 0 0 rgba(23,217,212,0);
+          }
         }
 
         .main-card-glow {
@@ -696,7 +756,7 @@ export default function GlobalQRGenerator() {
           height: 300px;
           right: -140px;
           top: -130px;
-          background: rgba(32,216,220,.1);
+          background: rgba(23,217,212,.14);
         }
 
         .main-card-glow-gold {
@@ -704,7 +764,7 @@ export default function GlobalQRGenerator() {
           height: 280px;
           left: -140px;
           bottom: -140px;
-          background: rgba(217,145,69,.075);
+          background: rgba(210,170,85,.12);
         }
 
         .main-card-shimmer {
@@ -712,7 +772,7 @@ export default function GlobalQRGenerator() {
           inset: 0;
           pointer-events: none;
           background:
-            linear-gradient(120deg, transparent 25%, rgba(255,255,255,.045), transparent 65%);
+            linear-gradient(120deg, transparent 25%, rgba(11,147,166,.05), transparent 65%);
         }
 
         .qr-controls-panel,
@@ -741,11 +801,11 @@ export default function GlobalQRGenerator() {
           display: grid;
           place-items: center;
           flex: 0 0 auto;
-          border: 1px solid rgba(32,216,220,.28);
+          border: 1px solid rgba(11,147,166,.3);
           border-radius: 16px;
-          color: #20d8dc;
-          background: rgba(32,216,220,.08);
-          box-shadow: inset 0 0 20px rgba(32,216,220,.05);
+          color: var(--hx-cyan, #0b93a6);
+          background: rgba(11,147,166,.08);
+          box-shadow: inset 0 0 20px rgba(23,217,212,.06);
         }
 
         .control-heading-icon svg {
@@ -760,7 +820,7 @@ export default function GlobalQRGenerator() {
         }
 
         .control-heading span {
-          color: rgba(227,160,79,.72);
+          color: var(--hx-gold, #a9791f);
           font-size: 10px;
           font-weight: 750;
           letter-spacing: .11em;
@@ -769,13 +829,13 @@ export default function GlobalQRGenerator() {
 
         .control-heading h2 {
           margin: 0;
-          color: white;
+          color: var(--hx-text, #0d2338);
           font-size: 20px;
         }
 
         .qr-input-label {
           margin-bottom: 10px;
-          color: rgba(215,225,237,.7);
+          color: var(--hx-muted-strong, #3c516a);
           font-size: 12px;
           font-weight: 650;
         }
@@ -792,7 +852,7 @@ export default function GlobalQRGenerator() {
           position: absolute;
           left: 16px;
           z-index: 2;
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
         }
 
         .qr-input-wrapper input {
@@ -800,23 +860,23 @@ export default function GlobalQRGenerator() {
           min-height: 58px;
           padding: 0 18px 0 48px;
           outline: none;
-          border: 1px solid rgba(255,255,255,.09);
+          border: 1px solid rgba(14,55,92,.16);
           border-radius: 16px;
-          color: #f4f8fd;
-          background: rgba(2,12,23,.7);
+          color: var(--hx-text, #0d2338);
+          background: var(--hx-panel-strong, #ffffff);
           font-size: 13px;
           transition: .3s ease;
         }
 
         .qr-input-wrapper input::placeholder {
-          color: rgba(173,190,210,.28);
+          color: rgba(13,35,56,.35);
         }
 
         .qr-input-wrapper input:focus {
-          border-color: rgba(32,216,220,.52);
+          border-color: rgba(11,147,166,.55);
           box-shadow:
-            0 0 0 4px rgba(32,216,220,.055),
-            0 0 24px rgba(32,216,220,.07);
+            0 0 0 4px var(--hx-focus, rgba(11,147,166,.22)),
+            0 0 24px rgba(23,217,212,.1);
         }
 
         .qr-input-light {
@@ -829,8 +889,8 @@ export default function GlobalQRGenerator() {
           transform: scaleX(.4);
           border-radius: 999px;
           background:
-            linear-gradient(90deg, transparent, #20d8dc, #d99145, transparent);
-          box-shadow: 0 0 16px rgba(32,216,220,.35);
+            linear-gradient(90deg, transparent, #0aa2b4, #d2aa55, transparent);
+          box-shadow: 0 0 16px rgba(23,217,212,.3);
           transition: .3s ease;
         }
 
@@ -859,6 +919,17 @@ export default function GlobalQRGenerator() {
           font-weight: 750;
           cursor: pointer;
           transition: .35s ease;
+          /* backwards fill: releases transform to hover/tap styles after entry */
+          animation: qrRiseIn .55s var(--hx-ease, cubic-bezier(.16,1,.3,1)) backwards;
+        }
+
+        .qr-button-grid .qr-action-button:nth-child(1) { animation-delay: .38s; }
+        .qr-button-grid .qr-action-button:nth-child(2) { animation-delay: .45s; }
+        .qr-button-grid .qr-action-button:nth-child(3) { animation-delay: .52s; }
+        .qr-button-grid .qr-action-button:nth-child(4) { animation-delay: .59s; }
+
+        .qr-action-button:active:not(:disabled) {
+          transform: translateY(0) scale(.97);
         }
 
         .qr-action-button svg {
@@ -874,38 +945,38 @@ export default function GlobalQRGenerator() {
         }
 
         .copy-button {
-          border: 1px solid rgba(32,216,220,.28);
-          color: #dce8f4;
+          border: 1px solid rgba(11,147,166,.35);
+          color: var(--hx-navy, #0c3455);
           background:
-            linear-gradient(145deg, rgba(11,40,53,.72), rgba(3,17,30,.88));
+            linear-gradient(145deg, #ffffff, #f3f8fd);
         }
 
         .copy-button:hover,
         .copy-button.copied {
-          color: #20d8dc;
-          border-color: rgba(32,216,220,.62);
-          box-shadow: 0 16px 32px rgba(0,0,0,.26), 0 0 24px rgba(32,216,220,.08);
+          color: var(--hx-cyan, #0b93a6);
+          border-color: rgba(11,147,166,.6);
+          box-shadow: 0 16px 32px rgba(20,55,95,.14), 0 0 24px rgba(23,217,212,.12);
         }
 
         .copy-button.copied svg {
-          color: #16d8a0;
+          color: #0f9d76;
         }
 
         .download-button {
-          border: 1px solid rgba(229,160,82,.62);
-          color: white;
+          border: 1px solid rgba(10,162,180,.45);
+          color: #001116;
           background:
-            linear-gradient(135deg, rgba(32,148,163,.86), rgba(199,121,56,.92));
+            linear-gradient(135deg, #27e8df, #00a8bd 58%, #d3aa56 135%);
           box-shadow:
-            0 14px 32px rgba(32,136,166,.15),
-            0 10px 26px rgba(199,121,56,.12);
+            0 12px 35px rgba(0,196,202,.2),
+            inset 0 1px 0 rgba(255,255,255,.42);
         }
 
         .download-button:hover {
-          border-color: rgba(244,188,117,.9);
+          border-color: rgba(10,162,180,.7);
           box-shadow:
-            0 19px 40px rgba(0,0,0,.3),
-            0 0 28px rgba(217,145,69,.13);
+            0 18px 45px rgba(0,205,208,.28),
+            inset 0 1px 0 rgba(255,255,255,.45);
         }
 
         .download-button:disabled {
@@ -933,16 +1004,16 @@ export default function GlobalQRGenerator() {
           align-items: center;
           gap: 11px;
           padding: 13px 14px;
-          border: 1px solid rgba(255,255,255,.06);
+          border: 1px solid var(--hx-line-soft, rgba(14,55,92,.07));
           border-radius: 14px;
-          background: rgba(255,255,255,.022);
+          background: rgba(13,35,56,.03);
         }
 
         .quality-note > svg {
           width: 20px;
           height: 20px;
           flex: 0 0 auto;
-          color: #e3a04f;
+          color: var(--hx-gold, #a9791f);
         }
 
         .quality-note div {
@@ -952,12 +1023,12 @@ export default function GlobalQRGenerator() {
         }
 
         .quality-note strong {
-          color: rgba(239,245,252,.8);
+          color: #33475a;
           font-size: 11px;
         }
 
         .quality-note span {
-          color: rgba(165,183,204,.42);
+          color: #7a8ea0;
           font-size: 10px;
         }
 
@@ -969,11 +1040,11 @@ export default function GlobalQRGenerator() {
           justify-content: center;
           overflow: hidden;
           padding: 26px;
-          border: 1px solid rgba(32,216,220,.16);
+          border: 1px solid rgba(11,147,166,.22);
           border-radius: 22px;
           background:
-            radial-gradient(circle at center 45%, rgba(10,79,91,.13), transparent 36%),
-            rgba(2,13,24,.62);
+            radial-gradient(circle at center 45%, rgba(10,162,180,.1), transparent 36%),
+            rgba(255,255,255,.7);
         }
 
         .preview-heading {
@@ -986,7 +1057,7 @@ export default function GlobalQRGenerator() {
         }
 
         .preview-heading span {
-          color: rgba(227,160,79,.72);
+          color: var(--hx-gold, #a9791f);
           font-size: 9px;
           font-weight: 750;
           letter-spacing: .1em;
@@ -994,7 +1065,7 @@ export default function GlobalQRGenerator() {
         }
 
         .preview-heading strong {
-          color: rgba(239,245,252,.8);
+          color: #33475a;
           font-size: 13px;
         }
 
@@ -1015,16 +1086,16 @@ export default function GlobalQRGenerator() {
         .stage-ring-one {
           width: 290px;
           height: 290px;
-          border-top-color: rgba(32,216,220,.36);
-          border-right-color: rgba(217,145,69,.22);
+          border-top-color: rgba(10,162,180,.4);
+          border-right-color: rgba(178,134,45,.28);
           animation: qrSpin 13s linear infinite;
         }
 
         .stage-ring-two {
           width: 324px;
           height: 324px;
-          border-bottom-color: rgba(32,216,220,.2);
-          border-left-color: rgba(217,145,69,.42);
+          border-bottom-color: rgba(10,162,180,.22);
+          border-left-color: rgba(178,134,45,.4);
           animation: qrSpin 18s linear infinite reverse;
         }
 
@@ -1033,8 +1104,8 @@ export default function GlobalQRGenerator() {
           height: 7px;
           position: absolute;
           border-radius: 50%;
-          background: #e5a052;
-          box-shadow: 0 0 15px rgba(229,160,82,.9);
+          background: #d2aa55;
+          box-shadow: 0 0 15px rgba(210,170,85,.7);
           animation: qrPulse 2s ease-in-out infinite;
         }
 
@@ -1055,7 +1126,7 @@ export default function GlobalQRGenerator() {
           display: grid;
           place-items: center;
           padding: 22px;
-          border: 1px solid rgba(255,255,255,.16);
+          border: 1px solid var(--hx-line, rgba(14,55,92,.12));
           border-radius: 22px;
           background: white;
         }
@@ -1068,8 +1139,19 @@ export default function GlobalQRGenerator() {
           width: 24px;
           height: 24px;
           position: absolute;
-          border-color: #20d8dc;
+          border-color: #0aa2b4;
           border-style: solid;
+          animation: qrCornerIn .5s var(--hx-ease, cubic-bezier(.16,1,.3,1)) both;
+        }
+
+        .corner-top-left { animation-delay: .7s; }
+        .corner-top-right { animation-delay: .82s; }
+        .corner-bottom-right { animation-delay: .94s; }
+        .corner-bottom-left { animation-delay: 1.06s; }
+
+        @keyframes qrCornerIn {
+          from { opacity: 0; transform: scale(.5); }
+          to { opacity: 1; transform: scale(1); }
         }
 
         .corner-top-left {
@@ -1114,8 +1196,8 @@ export default function GlobalQRGenerator() {
           transform: translateX(-50%);
           border-radius: 999px;
           background:
-            linear-gradient(90deg, transparent, rgba(217,145,69,.7), rgba(32,216,220,.62), transparent);
-          box-shadow: 0 0 10px rgba(32,216,220,.13);
+            linear-gradient(90deg, transparent, rgba(210,170,85,.6), rgba(10,162,180,.55), transparent);
+          box-shadow: 0 0 10px rgba(23,217,212,.16);
         }
 
         .qr-platform span:nth-child(1) {
@@ -1146,8 +1228,8 @@ export default function GlobalQRGenerator() {
           height: 9px;
           flex: 0 0 auto;
           border-radius: 50%;
-          background: #16d8a0;
-          box-shadow: 0 0 14px rgba(22,216,160,.8);
+          background: #0f9d76;
+          box-shadow: 0 0 14px rgba(15,157,118,.6);
         }
 
         .preview-status div {
@@ -1157,12 +1239,12 @@ export default function GlobalQRGenerator() {
         }
 
         .preview-status strong {
-          color: #20d8dc;
+          color: var(--hx-cyan, #0b93a6);
           font-size: 11px;
         }
 
         .preview-status small {
-          color: rgba(163,182,203,.4);
+          color: #7a8ea0;
           font-size: 9px;
         }
 
