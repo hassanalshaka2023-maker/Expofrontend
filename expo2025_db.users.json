@@ -1,0 +1,189 @@
+[{
+  "_id": {
+    "$oid": "6a564f33044ccf5d72a1bc0e"
+  },
+  "name": "Hassan",
+  "email": "hassan@gmail.com",
+  "passwordHash": "$2b$10$t8hFrTb.gQv0SlGHIly1qe/oshYHmFSw8aFAdfCK42ah1sfgR3wnS",
+  "role": "admin",
+  "isActive": true,
+  "staffQRToken": "7225bf6d63c253e1337040672ee59733e7397b800c445fe3f3cf9eb338432ceb",
+  "isInside": false,
+  "companyName": "Arwa",
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:01:07.285Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:01:07.285Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5650a8909dccdb82fae4f9"
+  },
+  "name": "Ruba",
+  "email": "ruba@gmail.com",
+  "passwordHash": "$2b$10$P5pZ6f7CB4C4kRIQZXHkoOvcOFIv7xzd7fOR0iGrSSbEcZC2890Fi",
+  "role": "investor",
+  "isActive": true,
+  "staffQRToken": "af404e18e129d57cc3f9dc8c71fe1d71e264c9e749c8b3a4a0f5f14bbd1902cb",
+  "isInside": false,
+  "companyName": "Samsung",
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:07:20.165Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:07:20.165Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a56522d909dccdb82fae544"
+  },
+  "name": "Dani",
+  "email": "dani@gmail.com",
+  "passwordHash": "$2b$10$fozxJ1QN/lFJNxLrtu1grO1R.lvQx4Nu4VQ/G/qaSk9Qw4lMW.vNW",
+  "role": "investor",
+  "isActive": true,
+  "staffQRToken": "82a273294cf1d9cdfbc0efd2e11eab977bd8b84813a86cad89cca9717ffb2317",
+  "isInside": false,
+  "companyName": "Al-Hafiz",
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:13:49.812Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:13:49.812Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5652ef909dccdb82fae59f"
+  },
+  "name": "arwa",
+  "email": "arwa@gmail.com",
+  "passwordHash": "$2b$10$n0Cto7Z.zDQ9vUOVnwa/EOKrtjSaNxc04s/TPmLn5mehUHlaES.62",
+  "role": "staff",
+  "isActive": true,
+  "staffQRToken": "5d5b3cb74ad351e8fb41bcfa5a65977c860b12e1d686d6ffd344003d49ee7599",
+  "isInside": false,
+  "companyName": null,
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:17:03.492Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:17:03.492Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a565318909dccdb82fae5a0"
+  },
+  "name": "ali",
+  "email": "ali@gmail.com",
+  "passwordHash": "$2b$10$ho1Dtvljby.hM/XV31sT0./7Qf1aW5NX0Z4s78HG5jRsiyYpqPyl.",
+  "role": "staff",
+  "isActive": true,
+  "staffQRToken": "22a7a41e07f21850941c4c8ffd848137ebf590cf59a36f2a10fb7fe979f06da6",
+  "isInside": false,
+  "companyName": null,
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:17:44.921Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:17:44.921Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a565326909dccdb82fae5a1"
+  },
+  "name": "amar",
+  "email": "amar@gmail.com",
+  "passwordHash": "$2b$10$y7yhPcM7XOmvLWSX7G3POOL/jj1rwhoBeU68GFAvyx601w1wZxuTO",
+  "role": "staff",
+  "isActive": true,
+  "staffQRToken": "00e8ba18232e31eb701758fb03c1519dabebd4aa8b7b8767fd672a44f3ac2299",
+  "isInside": false,
+  "companyName": null,
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:17:58.613Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:17:58.613Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a56533b909dccdb82fae5a2"
+  },
+  "name": "mohamed",
+  "email": "mohamed@gmail.com",
+  "passwordHash": "$2b$10$vEY8ClIy2fna8uVKubiLHOesuiIU5Cql6gx6LY9BxM6H7MFokEfwC",
+  "role": "staff",
+  "isActive": true,
+  "staffQRToken": "c1a33bc866d6e59bfdc5f30c8c270cd977f4e4680c4355fe1c98d66a63b5a47b",
+  "isInside": false,
+  "companyName": null,
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:18:19.432Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:18:19.432Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5653e4909dccdb82fae5d5"
+  },
+  "name": "Hosen",
+  "email": "hosen@gmail.com",
+  "passwordHash": "$2b$10$1TMoQKjs2/HJcyHXRVOpIuQIQS.AggFVZHS8IEfp1jdYknSy5Ge2u",
+  "role": "investor",
+  "isActive": true,
+  "staffQRToken": "443ed1adb372ec15a3a3b3ca8c6cebe3821302370781d42d418177c8fd35e969",
+  "isInside": false,
+  "companyName": "MTN",
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:21:08.826Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:21:08.826Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a565463909dccdb82fae5fc"
+  },
+  "name": "Baraa",
+  "email": "baraa@gmail.com",
+  "passwordHash": "$2b$10$Z5PqE4qJSBNE7K0QPTyEjOjzgLoFRknwh4R/FYWhPA564nsSvj3/a",
+  "role": "investor",
+  "isActive": true,
+  "staffQRToken": "f7e699592f3c754e837e66fad2e5cbe838a2ff9e5679d7c5dd749afbd06b5087",
+  "isInside": false,
+  "companyName": "syriatel",
+  "companyLogo": null,
+  "createdAt": {
+    "$date": "2026-07-14T15:23:15.060Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:23:15.060Z"
+  },
+  "__v": 0
+}]

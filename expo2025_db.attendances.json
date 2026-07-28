@@ -1,0 +1,228 @@
+[{
+  "_id": {
+    "$oid": "6a57459faae41527639e0c08"
+  },
+  "staffId": {
+    "$oid": "6a56533b909dccdb82fae5a2"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:32:31.122Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:32:31.125Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:32:31.125Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5745e9aae41527639e0c09"
+  },
+  "staffId": {
+    "$oid": "6a565326909dccdb82fae5a1"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:33:45.335Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:33:45.335Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:33:45.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5746edaae41527639e0c22"
+  },
+  "staffId": {
+    "$oid": "6a565318909dccdb82fae5a0"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:38:05.376Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:38:05.376Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:38:05.376Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574722aae41527639e0c23"
+  },
+  "staffId": {
+    "$oid": "6a565318909dccdb82fae5a0"
+  },
+  "actionType": "check-out",
+  "timestamp": {
+    "$date": "2026-07-15T08:38:58.930Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:38:58.931Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:38:58.931Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574738aae41527639e0c24"
+  },
+  "staffId": {
+    "$oid": "6a5652ef909dccdb82fae59f"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:39:20.858Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:39:20.858Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:39:20.858Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574758aae41527639e0c3d"
+  },
+  "staffId": {
+    "$oid": "6a56533b909dccdb82fae5a2"
+  },
+  "actionType": "check-out",
+  "timestamp": {
+    "$date": "2026-07-15T08:39:52.042Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:39:52.042Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:39:52.042Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574761aae41527639e0c3e"
+  },
+  "staffId": {
+    "$oid": "6a565326909dccdb82fae5a1"
+  },
+  "actionType": "check-out",
+  "timestamp": {
+    "$date": "2026-07-15T08:40:01.213Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:40:01.214Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:40:01.214Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574769aae41527639e0c3f"
+  },
+  "staffId": {
+    "$oid": "6a565318909dccdb82fae5a0"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:40:09.108Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:40:09.108Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:40:09.108Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574775aae41527639e0c40"
+  },
+  "staffId": {
+    "$oid": "6a5652ef909dccdb82fae59f"
+  },
+  "actionType": "check-out",
+  "timestamp": {
+    "$date": "2026-07-15T08:40:21.308Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:40:21.308Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:40:21.308Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a574793aae41527639e0c41"
+  },
+  "staffId": {
+    "$oid": "6a56533b909dccdb82fae5a2"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:40:51.530Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:40:51.531Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:40:51.531Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a57479daae41527639e0c42"
+  },
+  "staffId": {
+    "$oid": "6a5652ef909dccdb82fae59f"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:41:01.850Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:41:01.850Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:41:01.850Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a5747a5aae41527639e0c43"
+  },
+  "staffId": {
+    "$oid": "6a565326909dccdb82fae5a1"
+  },
+  "actionType": "check-in",
+  "timestamp": {
+    "$date": "2026-07-15T08:41:09.058Z"
+  },
+  "createdAt": {
+    "$date": "2026-07-15T08:41:09.058Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-15T08:41:09.058Z"
+  },
+  "__v": 0
+}]

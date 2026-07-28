@@ -1,0 +1,372 @@
+[{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae4fb"
+  },
+  "boothId": "B1",
+  "status": "Reserved",
+  "investorId": "6a56522d909dccdb82fae544",
+  "position3D": {
+    "x": -12,
+    "y": 0,
+    "z": 12
+  },
+  "companyDetails": {
+    "companyName": "Al-Hafiz",
+    "companyLogo": "",
+    "description": "Selling all types of household appliances, from refrigerators to washing machines to any electrical appliance.",
+    "category": "Home appliances",
+    "_id": {
+      "$oid": "6a565286909dccdb82fae55e"
+    }
+  },
+  "ratingSum": 3,
+  "ratingCount": 1,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.828Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:18:55.324Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae4fe"
+  },
+  "boothId": "B2",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": -14,
+    "y": 0,
+    "z": 4
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Standard",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae4ff"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae501"
+  },
+  "boothId": "B3",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": -10,
+    "y": 0,
+    "z": -4
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Standard",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae502"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae504"
+  },
+  "boothId": "B4",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": -12,
+    "y": 0,
+    "z": -12
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "VIP Booth",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae505"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae507"
+  },
+  "boothId": "B5",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": 12,
+    "y": 0,
+    "z": 12
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Premium VIP",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae508"
+    }
+  },
+  "ratingSum": 2,
+  "ratingCount": 1,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:19:00.711Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae50a"
+  },
+  "boothId": "B6",
+  "status": "Reserved",
+  "investorId": "6a5650a8909dccdb82fae4f9",
+  "position3D": {
+    "x": 14,
+    "y": 0,
+    "z": 4
+  },
+  "companyDetails": {
+    "companyName": "Samsung",
+    "companyLogo": "",
+    "description": "Our company sells the best and latest types of mobile phones and laptops.",
+    "category": "mobila app and labtop",
+    "_id": {
+      "$oid": "6a5651bc909dccdb82fae537"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:16:21.527Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae50d"
+  },
+  "boothId": "B7",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": 10,
+    "y": 0,
+    "z": -4
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Standard",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae50e"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae510"
+  },
+  "boothId": "B8",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": 12,
+    "y": 0,
+    "z": -12
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "VIP Booth",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae511"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae513"
+  },
+  "boothId": "B9",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": -5,
+    "y": 0,
+    "z": 2
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Startup Zone",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae514"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae516"
+  },
+  "boothId": "B10",
+  "status": "Reserved",
+  "investorId": "6a565463909dccdb82fae5fc",
+  "position3D": {
+    "x": 5,
+    "y": 0,
+    "z": 2
+  },
+  "companyDetails": {
+    "companyName": "syriatel",
+    "companyLogo": "",
+    "description": "Welcome to the Syriatel booth. Visit us to discover the most powerful connectivity solutions and the latest innovative digital services that keep you connected to the future.",
+    "category": "Telecommunications and Digital Solutions",
+    "_id": {
+      "$oid": "6a5654b2909dccdb82fae616"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:24:57.339Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae519"
+  },
+  "boothId": "B11",
+  "status": "Reserved",
+  "investorId": "6a5653e4909dccdb82fae5d5",
+  "position3D": {
+    "x": -4,
+    "y": 0,
+    "z": -6
+  },
+  "companyDetails": {
+    "companyName": "MTN",
+    "companyLogo": "",
+    "description": "Discover the future of communications and innovative digital solutions with MTN. Visit us to experience our latest next-generation technologies and smart business services.",
+    "category": "Telecommunications & Digital Services",
+    "_id": {
+      "$oid": "6a565435909dccdb82fae5ef"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:25:03.573Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a565154909dccdb82fae51c"
+  },
+  "boothId": "B12",
+  "status": "Available",
+  "investorId": null,
+  "position3D": {
+    "x": 4,
+    "y": 0,
+    "z": -6
+  },
+  "companyDetails": {
+    "companyName": "",
+    "companyLogo": "",
+    "description": "",
+    "category": "Tech Zone",
+    "_id": {
+      "$oid": "6a565154909dccdb82fae51d"
+    }
+  },
+  "ratingSum": 0,
+  "ratingCount": 0,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-07-14T15:10:12.829Z"
+  }
+}]
